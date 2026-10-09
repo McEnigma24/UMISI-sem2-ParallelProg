@@ -3,5 +3,3 @@
 clear
 
 git pull
-
-
