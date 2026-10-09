@@ -1,0 +1,11 @@
+{
+  "timestamp_utc": "2026-10-09T19:14:31.162501+00:00",
+  "n_samples": 10000000,
+  "pi_estimate": 3.1421424,
+  "mpi_size": 4,
+  "hosts": [
+    "ac0061"
+  ],
+  "slurm_job_id": "21192730",
+  "wall_seconds_max_rank": 0.09144956999999998
+}
