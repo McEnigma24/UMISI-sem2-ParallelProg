@@ -6,8 +6,8 @@ hpc-grants
 
 sinfo – info about nodes
 squeue – queue status
-sbatch – submit a job
-srun – run an interactive job/job step
+    sbatch – submit a job
+    srun – run an interactive job/job step
 scancel – cancel job
 sacct – accounting information
 
