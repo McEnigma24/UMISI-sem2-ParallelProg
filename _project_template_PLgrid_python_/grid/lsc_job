@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --job-name=GRID_TEMPLATE
-#SBATCH --account=plglscclass26-gpu
+#SBATCH --account=plgar2026-cpu
 #SBATCH --partition=plgrid-gpu-v100
 #SBATCH --time=02:00:00
 #SBATCH --ntasks=1
