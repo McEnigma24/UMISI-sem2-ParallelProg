@@ -41,12 +41,27 @@ wheels = [
 ]
 
 [[package]]
+name = "openmpi"
+version = "5.0.11"
+source = { registry = "https://pypi.org/simple" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/86/41/5e038cb69e7e5b6d432ad5c850f7a089bc9103d3413f5c391d9b2d1f475a/openmpi-5.0.11-py3-none-macosx_11_0_arm64.whl", hash = "sha256:71df6533e8f7699956f53ff61981ea6053b13afcc6fe56e4995b4b76809b815c", size = 3153977, upload-time = "2026-09-25T19:30:40.176Z" },
+    { url = "https://files.pythonhosted.org/packages/03/85/e05e21a673aade72602657765545778db4a6596131cf9811af80fc9c8ddc/openmpi-5.0.11-py3-none-macosx_11_0_x86_64.whl", hash = "sha256:baa5c73e2bcd20a22e8c3ef81c3700abde6e70d262b8b553eb1c5c067fe00a0d", size = 3534247, upload-time = "2026-09-25T19:30:42.305Z" },
+    { url = "https://files.pythonhosted.org/packages/e2/86/ef22f0486d7f6e80fe84c4145c7f606ddb7a1b1df55b865af2e8bf473cc7/openmpi-5.0.11-py3-none-manylinux_2_28_aarch64.whl", hash = "sha256:75aa6c3592567fec7ee17db4dc05ae652a010297a69b828b059e20d61a7e0bc6", size = 6083578, upload-time = "2026-09-25T19:30:44.756Z" },
+    { url = "https://files.pythonhosted.org/packages/3d/e2/7d19d517017bca8a2e1c921c39974c1e38923878d8a9c603011a36ea39d5/openmpi-5.0.11-py3-none-manylinux_2_28_x86_64.whl", hash = "sha256:838de0ec7fd719af19cde664cd6bf76eb170ed4769c279040c2db434d6db11b9", size = 6580491, upload-time = "2026-09-25T19:30:46.84Z" },
+]
+
+[[package]]
 name = "test"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [
     { name = "mpi4py" },
+    { name = "openmpi" },
 ]
 
 [package.metadata]
-requires-dist = [{ name = "mpi4py", specifier = ">=4.1.2" }]
+requires-dist = [
+    { name = "mpi4py", specifier = ">=4.1.2" },
+    { name = "openmpi", specifier = ">=5.0.11" },
+]
