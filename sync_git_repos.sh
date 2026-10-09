@@ -11,4 +11,3 @@ clear
     git pull --rebase
 }
 clear
-
