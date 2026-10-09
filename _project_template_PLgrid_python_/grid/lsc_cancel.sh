@@ -1,3 +1,3 @@
 #!/bin/bash
 
-scancel $(cat latest_job_started)
+scancel $(cat grid/latest_job_started)
