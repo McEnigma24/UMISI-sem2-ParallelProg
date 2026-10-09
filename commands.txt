@@ -1,0 +1,21 @@
+
+sinfo -s
+hpc-grants
+
+
+
+sinfo – info about nodes
+squeue – queue status
+sbatch – submit a job
+srun – run an interactive job/job step
+scancel – cancel job
+sacct – accounting information
+
+
+
+sinfo -p plgrid
+squeue
+sbatch job.sh
+srun -N 1 --ntasks-per-node=1 -p plgrid-testing --pty /bin/bash -l
+scancel <jobid>
+sacct -X
