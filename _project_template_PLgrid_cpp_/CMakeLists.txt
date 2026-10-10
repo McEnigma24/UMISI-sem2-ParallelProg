@@ -87,22 +87,23 @@ block(PROPAGATE ALL_LIBRARIES)
 endblock()
 
 # EXAMPLE - ssd1306 #
-#     include(FetchContent)
-#     FetchContent_Declare(
-#         ssd1306
-#         GIT_REPOSITORY https://github.com/armlabs/ssd1306_linux.git
-#         GIT_TAG        master # lub inny tag/commit
-#     )
-#     FetchContent_MakeAvailable(ssd1306) # tutaj nie dzial, a normanie zbudowalby projekt, ale tutaj nie zrobi bo nie ma pliku CMakeLists.txt
-#     include_directories(${ssd1306_SOURCE_DIR})
-#     # Dodaj pliki źródłowe ręcznie
-#     file(GLOB SSD1306_SOURCES
-#         ${ssd1306_SOURCE_DIR}/*.c
-#     )
-#     add_library(ssd1306 STATIC ${SSD1306_SOURCES})
-#     target_include_directories(ssd1306 PUBLIC ${ssd1306_SOURCE_DIR})
-#     set(ALL_LIBRARIES ${ALL_LIBRARIES} ssd1306) # dodajemy do glownego EXE
-#
+block(PROPAGATE ALL_LIBRARIES)
+    # include(FetchContent)
+    # FetchContent_Declare(
+    #     ssd1306
+    #     GIT_REPOSITORY https://github.com/armlabs/ssd1306_linux.git
+    #     GIT_TAG        master # lub inny tag/commit
+    # )
+    # FetchContent_MakeAvailable(ssd1306) # tutaj nie dzial, a normanie zbudowalby projekt, ale tutaj nie zrobi bo nie ma pliku CMakeLists.txt
+    # include_directories(${ssd1306_SOURCE_DIR})
+    # # Dodaj pliki źródłowe ręcznie
+    # file(GLOB SSD1306_SOURCES
+    #     ${ssd1306_SOURCE_DIR}/*.c
+    # )
+    # add_library(ssd1306 STATIC ${SSD1306_SOURCES})
+    # target_include_directories(ssd1306 PUBLIC ${ssd1306_SOURCE_DIR})
+    # set(ALL_LIBRARIES ${ALL_LIBRARIES} ssd1306) # dodajemy do glownego EXE
+endblock()
 
 
 
