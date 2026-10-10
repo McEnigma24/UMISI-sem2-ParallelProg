@@ -1,0 +1,31 @@
+Bootstrap: docker
+From: ubuntu:@UBUNTU_TAG@
+
+%environment
+    export DEBIAN_FRONTEND=noninteractive
+    export NEEDRESTART_MODE=a
+    export TERM=xterm-256color
+
+%post
+    export DEBIAN_FRONTEND=noninteractive
+    for cmd in groupadd useradd; do
+        if [ -x "/usr/sbin/$cmd" ]; then
+            printf '%s\n' '#!/bin/sh' 'exit 0' > "/usr/sbin/$cmd"
+            chmod +x "/usr/sbin/$cmd"
+        fi
+    done
+    for cmd in chgrp chown; do
+        if [ -x "/usr/bin/$cmd" ]; then
+            printf '%s\n' '#!/bin/sh' 'exit 0' > "/usr/bin/$cmd"
+            chmod +x "/usr/bin/$cmd"
+        fi
+    done
+    apt-get update -y && apt-get upgrade -y && \
+    apt-get install -y --no-install-recommends \
+        ca-certificates \
+        libssl3 \
+        libcurl4 \
+        libgomp1 \
+        openmpi-bin \
+        zlib1g && \
+    rm -rf /var/lib/apt/lists/*

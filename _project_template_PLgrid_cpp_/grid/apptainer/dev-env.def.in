@@ -1,0 +1,49 @@
+Bootstrap: localimage
+From: @RUNTIME_SIF@
+
+%post
+    export DEBIAN_FRONTEND=noninteractive
+    for cmd in groupadd useradd; do
+        if [ -x "/usr/sbin/$cmd" ]; then
+            printf '%s\n' '#!/bin/sh' 'exit 0' > "/usr/sbin/$cmd"
+            chmod +x "/usr/sbin/$cmd"
+        fi
+    done
+    for cmd in chgrp chown; do
+        if [ -x "/usr/bin/$cmd" ]; then
+            printf '%s\n' '#!/bin/sh' 'exit 0' > "/usr/bin/$cmd"
+            chmod +x "/usr/bin/$cmd"
+        fi
+    done
+    apt-get update -y && apt-get upgrade -y && \
+    apt-get install -y --no-install-recommends \
+        tar \
+        make \
+        curl \
+        ninja-build \
+        build-essential \
+        gcc \
+        g++ \
+        clang \
+        libopenmpi-dev \
+        libomp-dev \
+        libbenchmark-dev \
+        libcurl4-openssl-dev \
+        libssl-dev \
+        libprotobuf-dev \
+        protobuf-compiler \
+        git \
+        ca-certificates \
+        python3 \
+        python3-matplotlib && \
+    rm -rf /var/lib/apt/lists/*
+    CMAKE_VERSION=4.2.0
+    curl -fsSL "https://github.com/Kitware/CMake/releases/download/v${CMAKE_VERSION}/cmake-${CMAKE_VERSION}-linux-x86_64.tar.gz" | tar -xzf - -C /opt
+    install -d /usr/local/bin
+    for bin in cmake ctest cpack; do
+        ln -sf "/opt/cmake-${CMAKE_VERSION}-linux-x86_64/bin/${bin}" "/usr/local/bin/${bin}"
+    done
+    mkdir -p /workspace
+
+%environment
+    export MPLCONFIGDIR=/tmp/matplotlib

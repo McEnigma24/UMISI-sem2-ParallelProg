@@ -3,11 +3,12 @@
 #SBATCH --account=plgar2026-cpu     # hpc-grants -> Allocation:
 #SBATCH --partition=cpu-lowprio     # sinfo -s   -> Partition:   cpu | cpu-lowprio | plgrid
 #SBATCH --time=00:10:00
+#SBATCH --nodes=1
 #SBATCH --ntasks=8                  # num of processes
 #SBATCH --cpus-per-task=1           # threads per 1 process
 #SBATCH --mem=16G
-#SBATCH --output=output/out_%j.txt
-#SBATCH --error=output/err_%j.txt
+#SBATCH --output=output/out.txt
+#SBATCH --error=output/err.txt
 
 source "_common_" 2>/dev/null
 #--account=plgar2026-cpu     # hpc-grants -> Allocation:
@@ -16,23 +17,47 @@ source "_common_" 2>/dev/null
 ## GPU #
 ##SBATCH --gres=gpu:1
 
-cd $SLURM_SUBMIT_DIR
+set -euo pipefail
+
+source "$SLURM_SUBMIT_DIR/grid/_apptainer.sh"
+
+cd "$SLURM_SUBMIT_DIR"
 ls -al
 
-# Load modules #
-module load openmpi/4.1.6-gcc-13.2.0
-# module load cuda
+SIF_DEV="$SLURM_SUBMIT_DIR/sif/dev-env.sif"
+SIF_RUN="$SLURM_SUBMIT_DIR/sif/runtime-base.sif"
+EXE="$SLURM_SUBMIT_DIR/exe/TEMPLATE.exe"
 
-# SCRATCH env activate #
-# scratch_activation_path="$(realpath .)/.venv/bin/activate"
-# echo "SOURCING -> $scratch_activation_path"
-# source $scratch_activation_path
+if [[ ! -f "$SIF_DEV" || ! -f "$SIF_RUN" ]]; then
+    echo "Missing SIF images. Run: ./grid/build_sif.sh"
+    exit 1
+fi
 
+APPTAINER_COMMON=(
+    exec
+    --bind "$SLURM_SUBMIT_DIR"
+    --pwd "$SLURM_SUBMIT_DIR"
+)
 
-
-# START #
 echo "GRID_JOB -> STARTED"
 
-    mpirun -np $SLURM_NTASKS ./TEMPLATE.exe
+apptainer_cmd "${APPTAINER_COMMON[@]}" "$SIF_DEV" \
+    bash ./docker/_container_compile.sh
+
+MPI_TMP="$SLURM_SUBMIT_DIR/tmp/mpi-${SLURM_JOB_ID}"
+mkdir -p "$MPI_TMP"
+
+# Host Slurm sets TMPDIR under slurm_jobdir; that path is not writable inside the container.
+apptainer_cmd "${APPTAINER_COMMON[@]}" \
+    --cleanenv \
+    --env HOME="$SLURM_SUBMIT_DIR" \
+    --env TMPDIR="$MPI_TMP" \
+    --env TEMP="$MPI_TMP" \
+    --env TMP="$MPI_TMP" \
+    --env PMIX_TMPDIR="$MPI_TMP" \
+    --env OMPI_MCA_orte_tmpdir_base="$MPI_TMP" \
+    --env OMPI_MCA_btl_vader_single_copy_mechanism=none \
+    "$SIF_RUN" \
+    mpirun -np "$SLURM_NTASKS" "$EXE"
 
 echo "GRID_JOB -> ENDED"

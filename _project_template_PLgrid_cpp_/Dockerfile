@@ -34,7 +34,7 @@ RUN apt-get update -y && apt-get upgrade -y && \
     apt-get install -y --no-install-recommends \
         tar \
         make \
-        cmake \
+        curl \
         ninja-build \
         build-essential \
         gcc \
@@ -52,6 +52,9 @@ RUN apt-get update -y && apt-get upgrade -y && \
         python3 \
         python3-matplotlib && \
     rm -rf /var/lib/apt/lists/*
+
+COPY grid/apptainer/install_cmake.sh /tmp/install_cmake.sh
+RUN sh /tmp/install_cmake.sh && rm /tmp/install_cmake.sh
 
 # kontener chodzi jako użytkownik hosta i nie ma swojego $HOME w obrazie,
 # więc matplotlib musi dostać jawnie zapisywalny katalog na cache

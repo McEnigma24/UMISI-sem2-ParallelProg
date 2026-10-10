@@ -1,4 +1,5 @@
-
+# Apptainer (C++ template): brak na loginie Aresa — tylko na węzłach obliczeniowych.
+# ./grid/build_sif.sh sam odpala srun na compute; obrazy z grid/apptainer/*.def.in (nie dockerfile://).
 
 module avail python
 

@@ -1,0 +1,89 @@
+total 104
+drwxr-xr-x 19 plgwmackowiak plgrid 4096 Oct 10 22:26 .
+drwxr-xr-x  5 plgwmackowiak plgrid 4096 Oct 10 20:17 ..
+drwxr-xr-x  3 plgwmackowiak plgrid 4096 Oct 10 14:22 _bench
+drwxr-xr-x  4 plgwmackowiak plgrid 4096 Oct 10 22:26 build
+-rw-r--r--  1 plgwmackowiak plgrid 7054 Oct 10 20:37 CMakeLists.txt
+-rw-r--r--  1 plgwmackowiak plgrid 3218 Oct 10 14:22 config
+drwxr-xr-x  2 plgwmackowiak plgrid 4096 Oct 10 21:40 docker
+-rw-r--r--  1 plgwmackowiak plgrid 2585 Oct 10 22:07 Dockerfile
+drwxr-xr-x  2 plgwmackowiak plgrid 4096 Oct 10 22:26 exe
+drwxr-xr-x  2 plgwmackowiak plgrid 4096 Oct 10 22:06 external
+-rw-r--r--  1 plgwmackowiak plgrid   36 Oct 10 22:24 .gitignore
+drwxr-xr-x  4 plgwmackowiak plgrid 4096 Oct 10 21:30 grid
+drwxr-xr-x  2 plgwmackowiak plgrid 4096 Oct 10 14:22 _inc
+drwxr-xr-x  2 plgwmackowiak plgrid 4096 Oct 10 22:06 input
+-rw-r--r--  1 plgwmackowiak plgrid    4 Oct 10 14:22 .last_arch_marker
+drwxr-xr-x  2 plgwmackowiak plgrid 4096 Oct 10 22:06 log
+drwxr-xr-x  2 plgwmackowiak plgrid 4096 Oct 10 22:37 output
+drwxr-xr-x  2 plgwmackowiak plgrid 4096 Oct 10 22:06 run_time_config
+drwxr-xr-x  2 plgwmackowiak plgrid 4096 Oct 10 14:22 scripts
+drwxr-xr-x  2 plgwmackowiak plgrid 4096 Oct 10 22:11 sif
+drwxr-xr-x  2 plgwmackowiak plgrid 4096 Oct 10 14:22 __slicer
+drwxr-xr-x  2 plgwmackowiak plgrid 4096 Oct 10 20:30 _src
+-rwxr-xr-x  1 plgwmackowiak plgrid  355 Oct  9 23:52 sync_git_repos.sh
+drwxr-xr-x  2 plgwmackowiak plgrid 4096 Oct 10 14:22 _test
+drwxr-xr-x  3 plgwmackowiak plgrid 4096 Oct 10 22:26 tmp
+GRID_JOB -> STARTED
+[H[2J[3J
+Build (1/5) - Cleaning env
+
+Build (2/5) - Preparing env
+
+Build (3/5) - Building
+CMake Warning at build/_deps/core-src/CMakeLists.txt:56 (message):
+  Building library
+
+
+CMake Warning at CMakeLists.txt:143 (message):
+  Building exe
+
+
+-- Configuring done (2.3s)
+-- Generating done (0.0s)
+-- Build files have been written to: /net/afscra/people/plgwmackowiak/UMISI-sem2-ParallelProg/_project_template_PLgrid_cpp_/build
+[ 66%] Built target core
+[ 83%] Linking CXX executable TEMPLATE.exe
+[100%] Built target TEMPLATE.exe
+
+
+Build (4/5) - Testing ❌
+
+
+Build (5/5) - Copying to exe ✅
+
+
+Program          - took: 00:00:03
+_src/main.cpp:10 - It just works
+
+TIME_STAMP: It just works - timestamped                        22:37:39 (+ 1ms 249us 320ns )
+_src/main.cpp:10 - It just works
+
+TIME_STAMP: It just works - timestamped                        22:37:39 (+ 1ms 281us 200ns )
+_src/main.cpp:10 - It just works
+
+TIME_STAMP: It just works - timestamped                        22:37:39 (+ 1ms 251us 869ns )
+_src/main.cpp:10 - It just works
+
+TIME_STAMP: It just works - timestamped                        22:37:39 (+ 1ms 267us 298ns )
+_src/main.cpp:10 - It just works
+
+TIME_STAMP: It just works - timestamped                        22:37:39 (+ 1ms 276us 568ns )
+_src/main.cpp:10 - It just works
+
+TIME_STAMP: It just works - timestamped                        22:37:39 (+ 1ms 249us 883ns )
+_src/main.cpp:10 - It just works
+
+TIME_STAMP: It just works - timestamped                        22:37:39 (+ 1ms 255us 815ns )
+_src/main.cpp:10 - It just works
+
+TIME_STAMP: It just works - timestamped                        22:37:39 (+ 1ms 261us 125ns )
+Hello from process 6 out of 8 processes!
+Hello from process 7 out of 8 processes!
+Hello from process 4 out of 8 processes!
+Hello from process 5 out of 8 processes!
+Hello from process 1 out of 8 processes!
+Hello from process 0 out of 8 processes!
+Hello from process 2 out of 8 processes!
+Hello from process 3 out of 8 processes!
+GRID_JOB -> ENDED
