@@ -1,0 +1,8 @@
+{
+	"InstallScripts" : 
+	[
+		"/workspace/build/cmake_install.cmake",
+		"/workspace/build/_deps/core-build/cmake_install.cmake"
+	],
+	"Parallel" : false
+}

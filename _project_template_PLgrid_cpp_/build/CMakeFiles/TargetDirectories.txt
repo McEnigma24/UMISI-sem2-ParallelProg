@@ -1,0 +1,6 @@
+/workspace/build/CMakeFiles/TEMPLATE.exe.dir
+/workspace/build/CMakeFiles/edit_cache.dir
+/workspace/build/CMakeFiles/rebuild_cache.dir
+/workspace/build/_deps/core-build/CMakeFiles/core.dir
+/workspace/build/_deps/core-build/CMakeFiles/edit_cache.dir
+/workspace/build/_deps/core-build/CMakeFiles/rebuild_cache.dir

@@ -36,10 +36,12 @@ set(CONST_TARGET_NAME "TEMPLATE")
 # https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wfatal-errors
 
 # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall -Wextra")                                                             # to see everything
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wfatal-errors -Werror=uninitialized -Werror=init-self -Werror=reorder")    # for normal coding
-# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -march=native -w")                                                         # for release
+# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wfatal-errors -Werror=uninitialized -Werror=init-self -Werror=reorder")    # for normal coding
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -w")                                                                       # for release
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp")
+
+# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native")                                                                # specific
+# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp")
 # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mavx2")
 
 #                                                                  https://hjlebbink.github.io/x86doc/

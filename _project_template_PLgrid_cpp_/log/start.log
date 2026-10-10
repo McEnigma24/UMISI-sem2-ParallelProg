@@ -1,0 +1,27 @@
+
+Build (1/5) - Cleaning env
+
+Build (2/5) - Preparing env
+
+Build (3/5) - Building
+CMake Warning at build/_deps/core-src/CMakeLists.txt:56 (message):
+  Building library
+
+
+CMake Warning at CMakeLists.txt:120 (message):
+  Building exe
+
+
+-- Configuring done (0.0s)
+-- Generating done (0.0s)
+-- Build files have been written to: /workspace/build
+[ 66%] Built target core
+[ 83%] Linking CXX executable TEMPLATE.exe
+[100%] Built target TEMPLATE.exe
+
+
+Build (4/5) - Testing ❌
+
+
+Build (5/5) - Copying to exe ✅
+
