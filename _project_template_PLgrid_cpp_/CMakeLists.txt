@@ -44,7 +44,8 @@ add_definitions(-DSOURCE_PATH_SIZE=${SOURCE_PATH_SIZE})
 # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wfatal-errors -Werror=uninitialized -Werror=init-self -Werror=reorder")    # for normal coding
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -w")                                                                       # for release
 
-# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native")                                                                # specific
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=x86-64-v3")                                                             # specific
+# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native")
 # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp")
 # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mavx2")
 #                                                                  https://hjlebbink.github.io/x86doc/
