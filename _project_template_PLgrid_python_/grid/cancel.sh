@@ -1,4 +1,4 @@
 #!/bin/bash
-source "$(dirname "$0")/_common_"
+source "_common_" 2>/dev/null
 
 scancel $(cat grid/.latest_job_started)

@@ -1,5 +1,5 @@
 #!/bin/bash
-source "$(dirname "$0")/_common_"
+source "_common_" 2>/dev/null
 
 rm -f output/*
 

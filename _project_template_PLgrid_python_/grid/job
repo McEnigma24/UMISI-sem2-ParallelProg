@@ -9,7 +9,7 @@
 #SBATCH --output=output/out_%j.txt
 #SBATCH --error=output/err_%j.txt
 
-source "$(dirname "$0")/_common_"
+source "_common_" 2>/dev/null
 #--account=plgar2026-cpu     # hpc-grants -> Allocation:
 #--partition=cpu             # sinfo -s   -> Partition:
 
