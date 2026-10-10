@@ -33,13 +33,14 @@ if ! ls "$DIR_TARGET"/*.exe > /dev/null 2>&1; then
   exit 1
 fi
 
+proc_number="${1:-4}"
 container_id="$(docker run -d \
   "${DOCKER_HOST_USER[@]}" \
   -v "$(pwd):/workspace" \
   -w /workspace \
   --env LD_LIBRARY_PATH="/workspace/$DIR_BUILD" \
   "$DOCKER_FULL_IMG_NAME" \
-  bash -lc "exec ./$DIR_TARGET/*.exe")"
+  bash -lc "exec mpirun -np "$proc_number" ./$DIR_TARGET/*.exe")"
 
 stdbuf -oL docker logs -f "$container_id" 2>&1 | tee "$LOG_run" &
 logs_pid=$!
