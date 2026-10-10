@@ -1,3 +1,0 @@
-/var/spool/slurmd/job21193992/slurm_script: line 12: /var/spool/slurmd/job21193992/_common_: No such file or directory
- openmpi/4.1.6-gcc-13.2.0 unloaded.
- openmpi/4.1.6-gcc-13.2.0 loaded.
