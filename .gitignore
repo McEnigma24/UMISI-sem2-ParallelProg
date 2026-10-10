@@ -1,4 +1,6 @@
 *ssh*
 *venv*
 
-build*
+*/build/*
+*/exe/*
+*/log/*

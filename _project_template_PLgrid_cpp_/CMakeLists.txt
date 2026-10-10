@@ -10,6 +10,9 @@ endif()
 # set(CMAKE_CXX_COMPILER g++)
 # set(CMAKE_CXX_COMPILER clang++)
 
+
+# SOURCES #
+
 include_directories(_inc)
 aux_source_directory(_src SOURCES)
 
@@ -22,12 +25,15 @@ list(FILTER BENCH_SOURCES EXCLUDE REGEX ".*main\\.cpp")
 aux_source_directory(_bench BENCH_SOURCES)
 
 
+
 # MACRO FOR LOGS # - dont show the whole realpath to file
 
 string(LENGTH "${CMAKE_SOURCE_DIR}/" SOURCE_PATH_SIZE)
 add_definitions(-DSOURCE_PATH_SIZE=${SOURCE_PATH_SIZE})
 
 set(CONST_TARGET_NAME "TEMPLATE")
+
+
 
 # COMPILER FLAGS #
 
@@ -54,43 +60,51 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -w")                                
 # set(LINK_FLAGS "${LINK_FLAGS} -m64")
 
 
+
+# PACKAGES - present in the system (openmpi-bin) #
+# find_package(MPI REQUIRED)                        # adds flags | headers
+# set(ALL_LIBRARIES ${ALL_LIBRARIES} MPI::MPI_CXX)
+
+
+# EXTERNAL LIBS #
+# block()
+#
+# endblock()
+
 # 1 - core #
-include(FetchContent)
-FetchContent_Declare(
-    core
-    GIT_REPOSITORY https://github.com/McEnigma24/CORE_lib.git
-    GIT_TAG        main # lub inny tag/commit
-    GIT_SHALLOW    TRUE
-    GIT_SUBMODULES_RECURSE TRUE
-    UPDATE_DISCONNECTED ON
-)
-FetchContent_MakeAvailable(core)
+    include(FetchContent)
+    FetchContent_Declare(
+        core
+        GIT_REPOSITORY https://github.com/McEnigma24/CORE_lib.git
+        GIT_TAG        main # lub inny tag/commit
+        GIT_SHALLOW    TRUE
+        GIT_SUBMODULES_RECURSE TRUE
+        UPDATE_DISCONNECTED ON
+    )
+    FetchContent_MakeAvailable(core)
 
-set(ALL_LIBRARIES ${ALL_LIBRARIES} core)
-include_directories(${core_SOURCE_DIR}/_inc)
+    set(ALL_LIBRARIES ${ALL_LIBRARIES} core)
+    include_directories(${core_SOURCE_DIR}/_inc)
 
-
+#
 
 # EXAMPLE - ssd1306 #
-# include(FetchContent)
-# FetchContent_Declare(
-#     ssd1306
-#     GIT_REPOSITORY https://github.com/armlabs/ssd1306_linux.git
-#     GIT_TAG        master # lub inny tag/commit
-# )
-# FetchContent_MakeAvailable(ssd1306) # tutaj nie dzial, a normanie zbudowalby projekt, ale tutaj nie zrobi bo nie ma pliku CMakeLists.txt
-
-# include_directories(${ssd1306_SOURCE_DIR})
-
-# # Dodaj pliki źródłowe ręcznie
-# file(GLOB SSD1306_SOURCES
-#     ${ssd1306_SOURCE_DIR}/*.c
-# )
-
-# add_library(ssd1306 STATIC ${SSD1306_SOURCES})
-# target_include_directories(ssd1306 PUBLIC ${ssd1306_SOURCE_DIR})
-
-# set(ALL_LIBRARIES ${ALL_LIBRARIES} ssd1306) # dodajemy do glownego EXE
+#     include(FetchContent)
+#     FetchContent_Declare(
+#         ssd1306
+#         GIT_REPOSITORY https://github.com/armlabs/ssd1306_linux.git
+#         GIT_TAG        master # lub inny tag/commit
+#     )
+#     FetchContent_MakeAvailable(ssd1306) # tutaj nie dzial, a normanie zbudowalby projekt, ale tutaj nie zrobi bo nie ma pliku CMakeLists.txt
+#     include_directories(${ssd1306_SOURCE_DIR})
+#     # Dodaj pliki źródłowe ręcznie
+#     file(GLOB SSD1306_SOURCES
+#         ${ssd1306_SOURCE_DIR}/*.c
+#     )
+#     add_library(ssd1306 STATIC ${SSD1306_SOURCES})
+#     target_include_directories(ssd1306 PUBLIC ${ssd1306_SOURCE_DIR})
+#     set(ALL_LIBRARIES ${ALL_LIBRARIES} ssd1306) # dodajemy do glownego EXE
+#
 
 
 

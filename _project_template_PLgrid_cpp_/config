@@ -9,18 +9,6 @@ set -eo pipefail
 # set -x
 
 PACKAGES=(
-    tar
-    make
-    cmake
-    build-essential
-    gcc
-    g++
-    clang
-    libomp-dev
-    libbenchmark-dev
-    libcurl4-openssl-dev
-    libprotobuf-dev
-    protobuf-compiler
     docker-compose-v2
     docker
 )

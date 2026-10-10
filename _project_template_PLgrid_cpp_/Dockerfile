@@ -20,6 +20,7 @@ RUN apt-get update -y && apt-get upgrade -y && \
         libssl3 \
         libcurl4 \
         libgomp1 \
+        openmpi-bin \
         zlib1g && \
     rm -rf /var/lib/apt/lists/*
 
@@ -39,6 +40,7 @@ RUN apt-get update -y && apt-get upgrade -y && \
         gcc \
         g++ \
         clang \
+        libopenmpi-dev \
         libomp-dev \
         libbenchmark-dev \
         libcurl4-openssl-dev \
