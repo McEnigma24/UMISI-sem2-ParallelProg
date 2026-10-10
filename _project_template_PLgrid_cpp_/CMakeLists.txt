@@ -1,14 +1,14 @@
 cmake_minimum_required(VERSION 4.2)
 project(MyProject LANGUAGES CXX)
 
-set(CMAKE_CXX_STANDARD 20)
-
-if(NOT CMAKE_BUILD_TYPE)
-    set(CMAKE_BUILD_TYPE Release)
-endif()
-
+set(CMAKE_CXX_STANDARD 26)
 # set(CMAKE_CXX_COMPILER g++)
 # set(CMAKE_CXX_COMPILER clang++)
+# if(NOT CMAKE_BUILD_TYPE)
+#     set(CMAKE_BUILD_TYPE Release)
+# endif()
+
+set(CONST_TARGET_NAME "TEMPLATE")
 
 
 
@@ -32,8 +32,6 @@ aux_source_directory(_bench BENCH_SOURCES)
 string(LENGTH "${CMAKE_SOURCE_DIR}/" SOURCE_PATH_SIZE)
 add_definitions(-DSOURCE_PATH_SIZE=${SOURCE_PATH_SIZE})
 
-set(CONST_TARGET_NAME "TEMPLATE")
-
 
 
 # COMPILER FLAGS #
@@ -46,33 +44,30 @@ set(CONST_TARGET_NAME "TEMPLATE")
 # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wfatal-errors -Werror=uninitialized -Werror=init-self -Werror=reorder")    # for normal coding
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -w")                                                                       # for release
 
-
 # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native")                                                                # specific
 # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp")
 # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mavx2")
-
 #                                                                  https://hjlebbink.github.io/x86doc/
 #                                                                  - look for *.o file
 # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -S") # ASSEMBLY
 # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -S -fverbose-asm") # ASSEMBLY with comments
-
-
 # set(COMPILE_FLAGS "${COMPILE_FLAGS} -m64")
 # set(LINK_FLAGS "${LINK_FLAGS} -m64")
+# set_target_properties(${TARGET_NAME} PROPERTIES ${COMPILE_FLAGS} ${LINK_FLAGS}) # previousley before target_link_libraries()
 
 
 
 # PACKAGES - present in the system (openmpi-bin) #
+
 # find_package(MPI REQUIRED)                        # adds flags | headers
 # set(ALL_LIBRARIES ${ALL_LIBRARIES} MPI::MPI_CXX)
 
 
+
 # EXTERNAL LIBS #
-# block()
-#
-# endblock()
 
 # 1 - core #
+block(PROPAGATE ALL_LIBRARIES)
     include(FetchContent)
     FetchContent_Declare(
         core
@@ -82,12 +77,14 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -w")                                
         GIT_SUBMODULES_RECURSE TRUE
         UPDATE_DISCONNECTED ON
     )
+    set(BUILD_LIBRARY ON)
+    set(CTEST_ACTIVE OFF)
+    set(BENCH_ACTIVE OFF)
     FetchContent_MakeAvailable(core)
 
     set(ALL_LIBRARIES ${ALL_LIBRARIES} core)
     include_directories(${core_SOURCE_DIR}/_inc)
-
-#
+endblock()
 
 # EXAMPLE - ssd1306 #
 #     include(FetchContent)
@@ -109,37 +106,49 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -w")                                
 
 
 
-# Flagi buildu deklarujemy tylko wtedy, gdy to MY jesteśmy korzeniem drzewa CMake.
-# option() zawsze ląduje w globalnym cache (block() tego nie zmienia - obejmuje wyłącznie
-# zmienne zwykłe), więc podprojekt o tej samej nazwie dzieliłby wpis z projektem nadrzędnym.
-# Ten guard zastępuje dawne prefiksowanie nazw per projekt (TEMPLATE___, CORE___).
+# TARGET FLAGS #
+
 if(PROJECT_IS_TOP_LEVEL)
-    option(BUILD_LIBRARY "Build library instead of executable" OFF) # default value - could be overwritten by provided FLAG
-    option(CTEST_ACTIVE "Testing is active" OFF)                    # default value - could be overwritten by provided FLAG
-    option(BENCH_ACTIVE "Benchmarking is active" OFF)              # default value - could be overwritten by provided FLAG
+    option(BUILD_LIBRARY    "Build library instead of executable"   OFF) # default value - could be overwritten by provided FLAG
+    option(CTEST_ACTIVE     "Testing is active"                     OFF) # default value - could be overwritten by provided FLAG
+    option(BENCH_ACTIVE     "Benchmarking is active"                OFF) # default value - could be overwritten by provided FLAG
 else()
-    set(BUILD_LIBRARY OFF)
-    set(CTEST_ACTIVE OFF)
-    set(BENCH_ACTIVE OFF)
+
+    macro(default_if_not_passed var value)
+        if(NOT DEFINED ${var} OR DEFINED CACHE{${var}})
+            set(${var} ${value})
+        endif()
+    endmacro()
+
+    # backup if parent didn't set these flags AND directory is a sub-project
+    default_if_not_passed(BUILD_LIBRARY ON)
+    default_if_not_passed(CTEST_ACTIVE  OFF)
+    default_if_not_passed(BENCH_ACTIVE  OFF)
 endif()
+
+
+
+# TARGETS #
 
 if(BUILD_LIBRARY)
     message(WARNING "Building library")
-
     set(TARGET_NAME "${CONST_TARGET_NAME}")
+
     add_library(${TARGET_NAME} SHARED ${SOURCES})
-    target_compile_definitions(${TARGET_NAME} PRIVATE LINUX)
-    # set_target_properties(${TARGET_NAME} PROPERTIES ${COMPILE_FLAGS} ${LINK_FLAGS})
+    target_compile_definitions(${TARGET_NAME} PRIVATE LINUX)                    #define macros
     target_link_libraries(${TARGET_NAME} PUBLIC ${ALL_LIBRARIES})
 else()
     message(WARNING "Building exe")
-
     set(TARGET_NAME "${CONST_TARGET_NAME}.exe")
+
     add_executable(${TARGET_NAME} ${SOURCES})
-    target_compile_definitions(${TARGET_NAME} PRIVATE LINUX BUILD_EXECUTABLE)
-    # set_target_properties(${TARGET_NAME} PROPERTIES ${COMPILE_FLAGS} ${LINK_FLAGS})
+    target_compile_definitions(${TARGET_NAME} PRIVATE LINUX BUILD_EXECUTABLE)   #define macros
     target_link_libraries(${TARGET_NAME} PUBLIC ${ALL_LIBRARIES})
 endif()
+
+
+
+# TESTS #
 
 if(CTEST_ACTIVE)
     message(WARNING "TESTING...")
