@@ -1,0 +1,5 @@
+#!/bin/bash
+
+if [[ "$(basename "$PWD")" == "grid" ]]; then
+    cd ..
+fi

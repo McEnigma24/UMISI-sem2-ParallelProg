@@ -1,6 +1,7 @@
 #!/bin/bash
+source "$(dirname "$0")/_common_"
 
-# rm -f GRID_log*
+rm -f output/*
 
-# sbatch lsc_job
-sbatch --parsable lsc_job | tee grid/.latest_job_started
+# sbatch job
+sbatch --parsable grid/job | tee grid/.latest_job_started

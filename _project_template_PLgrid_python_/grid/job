@@ -1,13 +1,17 @@
 #!/bin/bash
 #SBATCH --job-name=GRID_TEMPLATE
 #SBATCH --account=plgar2026-cpu     # hpc-grants -> Allocation:
-#SBATCH --partition=cpu             # sinfo -s   -> Partition:
+#SBATCH --partition=cpu-lowprio          # sinfo -s   -> Partition:   cpu | cpu-lowprio | plgrid
 #SBATCH --time=02:00:00
-#SBATCH --ntasks=1
-#SBATCH --cpus-per-task=2
+#SBATCH --ntasks=4
+#SBATCH --cpus-per-task=1
 #SBATCH --mem=16G
-#SBATCH --output=GRID_log_out_%j.txt
-#SBATCH --error=GRID_log_err_%j.txt
+#SBATCH --output=output/out_%j.txt
+#SBATCH --error=output/err_%j.txt
+
+source "$(dirname "$0")/_common_"
+#--account=plgar2026-cpu     # hpc-grants -> Allocation:
+#--partition=cpu             # sinfo -s   -> Partition:
 
 ## GPU #
 ##SBATCH --gres=gpu:1
@@ -29,6 +33,11 @@ module load openmpi/4.1.6-gcc-13.2.0
 # START #
 echo "GRID_JOB -> STARTED"
 
-    uv run _src/main.py
+    # srun uv run _src/main.py
+    # mpirun -np $SLURM_NTASKS python _src/main.py
+    # srun --ntasks=1 .venv/bin/mpirun -np $SLURM_NTASKS uv run _src/main.py
+
+    mpirun -np $SLURM_NTASKS uv run python _src/main.py
+
 
 echo "GRID_JOB -> ENDED"
