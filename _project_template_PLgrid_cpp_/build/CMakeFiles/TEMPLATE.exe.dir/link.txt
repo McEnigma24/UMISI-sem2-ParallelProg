@@ -1,1 +1,0 @@
-/usr/bin/c++  -O3 -w -O3 -DNDEBUG -Wl,--dependency-file=CMakeFiles/TEMPLATE.exe.dir/link.d CMakeFiles/TEMPLATE.exe.dir/_src/main.cpp.o -o TEMPLATE.exe  _deps/core-build/libcore.a
