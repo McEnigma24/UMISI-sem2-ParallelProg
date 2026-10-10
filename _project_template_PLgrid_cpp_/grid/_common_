@@ -1,0 +1,6 @@
+#!/bin/bash
+
+if [[ "$(basename "$PWD")" == "grid" ]]; then
+    cd ..
+    echo "going back to repo root"
+fi
