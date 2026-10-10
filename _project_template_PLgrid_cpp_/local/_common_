@@ -1,6 +1,0 @@
-#!/bin/bash
-
-if [[ "$(basename "$PWD")" == "local" ]]; then
-    cd ..
-    echo "going back to repo root"
-fi

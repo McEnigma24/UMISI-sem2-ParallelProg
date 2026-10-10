@@ -59,8 +59,8 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -w")                                
 
 # PACKAGES - present in the system (openmpi-bin) #
 
-# find_package(MPI REQUIRED)                        # adds flags | headers
-# set(ALL_LIBRARIES ${ALL_LIBRARIES} MPI::MPI_CXX)
+find_package(MPI REQUIRED)                        # adds flags | headers
+set(ALL_LIBRARIES ${ALL_LIBRARIES} MPI::MPI_CXX)
 
 
 
