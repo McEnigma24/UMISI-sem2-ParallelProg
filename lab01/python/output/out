@@ -1,8 +1,22 @@
-Hello, World! I am rank 1 of 4
-Hello, World! I am rank 2 of 4
-Hello, World! I am rank 0 of 4
 Hello, World! I am rank 3 of 4
-Hello, World! I am rank 3 of 4 after barrier
-Hello, World! I am rank 0 of 4 after barrier
-Hello, World! I am rank 2 of 4 after barrier
+Hello, World! I am rank 0 of 4
+Hello, World! I am rank 2 of 4
+Hello, World! I am rank 1 of 4
 Hello, World! I am rank 1 of 4 after barrier
+Hello, World! I am rank 0 of 4 after barrier
+MAIN process
+MAIN process
+MAIN process
+(4, 4)
+Hello, World! I am rank 2 of 4 after barrier
+Hello, World! I am rank 3 of 4 after barrier
+Completed iteration 0
+Completed iteration 1
+Completed iteration 2
+Completed iteration 3
+Completed iteration 4
+Completed iteration 5
+Completed iteration 6
+Completed iteration 7
+Completed iteration 8
+Completed iteration 9

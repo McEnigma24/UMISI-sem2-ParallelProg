@@ -1,6 +1,7 @@
 #!/bin/bash
 source "_common_" 2>/dev/null
 
+clear
 rm -f output/*
 
 # sbatch job
