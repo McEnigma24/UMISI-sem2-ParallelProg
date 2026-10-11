@@ -47,9 +47,30 @@ class Membrane:
                     ) / 4.0
 
             # Komunikacja jeśli jest coś    nad y_start   i   pod y_end
+            # PROC_NULL = brak sąsiada, wtedy Sendrecv nic nie robi
+            up = MPI_rank - 1 if MPI_rank > 0 else MPI.PROC_NULL
+            down = MPI_rank + 1 if MPI_rank < MPI_size - 1 else MPI.PROC_NULL
 
-            self.h = self.h_next
-            self.h_next = self.h
+            # mój pierwszy wiersz idzie w górę, z dołu przychodzi wiersz y_end
+            comm.Sendrecv(self.h_next[y_start], dest=up, recvbuf=self.h_next[y_end], source=down)
+            # mój ostatni wiersz idzie w dół, z góry przychodzi wiersz y_start - 1
+            comm.Sendrecv(self.h_next[y_end - 1], dest=down, recvbuf=self.h_next[y_start - 1], source=up)
+
+            # te operacje są blokujące, więc musimy upewnić się, że gadamy z dwoma procesami, inaczej zaczyna się robić serializacja
+            # a tak każdy
+
+            reqs = [
+                comm.Isend(self.h_next[y_start],     dest=up),          # 1
+                comm.Irecv(self.h_next[y_start - 1], source=up),        # 2
+
+                comm.Irecv(self.h_next[y_end],       source=down),      # 1
+                comm.Isend(self.h_next[y_end - 1],   dest=down),        # 2
+            ]
+            MPI.Request.Waitall(reqs)
+
+
+
+            self.h, self.h_next = self.h_next, self.h
 
             # print(f"Completed iteration: {i}")
 
