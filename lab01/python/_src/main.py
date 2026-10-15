@@ -2,13 +2,23 @@ from mpi4py import MPI
 import numpy as np
 import math
 
+def clamp_values(self, x_start, x_end, y_start, y_end):
+    x_start = math.clamp(x_start, 1, self.how_many_partitions_1d - 1)
+    x_end = math.clamp(x_end, 1, self.how_many_partitions_1d - 1)
+    y_start = math.clamp(y_start, 1, self.how_many_partitions_1d - 1)
+    y_end = math.clamp(y_end, 1, self.how_many_partitions_1d - 1)
+    return (x_start, x_end, y_start, y_end)
+def distance_between_points(self, x, y, other_x, other_y):
+    # in our case its always da #
+    return self.da
+
 comm = MPI.COMM_WORLD
 MPI_rank = comm.Get_rank()
 MPI_size = comm.Get_size()
 
 class Membrane:
     def __init__(self):
-        self.p = 100        # ciśnienie na membranie
+        self.p = 500        # ciśnienie na membranie
         self.T = 100        # napięcie membrany
         self.max_iterations = 10
 
@@ -20,16 +30,9 @@ class Membrane:
         self.h = np.zeros(shape, dtype=float)
         self.h_next = np.zeros(shape, dtype=float)
 
-    def distance_between_points(self, x, y, other_x, other_y):
-        # in our case its always da #
-        return self.da
-
-    # def clamp_values(self, x_start, x_end, y_start, y_end):
-    #     x_start = math.clamp(x_start, 1, self.how_many_partitions_1d - 1)
-    #     x_end = math.clamp(x_end, 1, self.how_many_partitions_1d - 1)
-    #     y_start = math.clamp(y_start, 1, self.how_many_partitions_1d - 1)
-    #     y_end = math.clamp(y_end, 1, self.how_many_partitions_1d - 1)
-    #     return (x_start, x_end, y_start, y_end)
+    def print_output(self):
+        print(self.h.shape)
+        print(self.h)
 
     def run_partition(self, y_start, y_end):
 
@@ -52,9 +55,9 @@ class Membrane:
             down = MPI_rank + 1 if MPI_rank < MPI_size - 1 else MPI.PROC_NULL
 
             # mój pierwszy wiersz idzie w górę, z dołu przychodzi wiersz y_end
-            comm.Sendrecv(self.h_next[y_start], dest=up, recvbuf=self.h_next[y_end], source=down)
-            # mój ostatni wiersz idzie w dół, z góry przychodzi wiersz y_start - 1
-            comm.Sendrecv(self.h_next[y_end - 1], dest=down, recvbuf=self.h_next[y_start - 1], source=up)
+            # comm.Sendrecv(self.h_next[y_start], dest=up, recvbuf=self.h_next[y_end], source=down)
+            # # mój ostatni wiersz idzie w dół, z góry przychodzi wiersz y_start - 1
+            # comm.Sendrecv(self.h_next[y_end - 1], dest=down, recvbuf=self.h_next[y_start - 1], source=up)
 
             # te operacje są blokujące, więc musimy upewnić się, że gadamy z dwoma procesami, inaczej zaczyna się robić serializacja
             # a tak każdy
@@ -92,10 +95,12 @@ class Membrane:
 
 
 
-
 if __name__ == "__main__":
 
     print(f"Hello, World! I am rank {MPI_rank} of {MPI_size}")
 
     membran = Membrane()
-    membran.run()
+    membran.start()
+
+    if MPI_rank == 0:
+        membran.print_output()
