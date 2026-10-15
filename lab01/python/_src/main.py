@@ -24,7 +24,7 @@ class Membrane:
 
         self.a = 50                                         # bok całej membrany
         self.how_many_partitions_1d = 1000                  # tyle partycji per 1 bok
-        self.da = self.a // self.how_many_partitions_1d     # odległość pomiędzy komórkami
+        self.da = self.a / self.how_many_partitions_1d      # odległość pomiędzy komórkami
 
         shape = (self.how_many_partitions_1d, self.how_many_partitions_1d)
         self.h = np.zeros(shape, dtype=float)
