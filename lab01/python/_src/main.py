@@ -20,7 +20,7 @@ class Membrane:
     def __init__(self):
         self.p = 500        # ciśnienie na membranie
         self.T = 100        # napięcie membrany
-        self.max_iterations = 10
+        self.max_iterations = 100
 
         self.a = 50                                         # bok całej membrany
         self.how_many_partitions_1d = 1000                  # tyle partycji per 1 bok
@@ -92,6 +92,14 @@ class Membrane:
         # y_end   | 11 | 21 | 31 | 40 | 49
 
         self.run_partition(y_start, y_end)
+
+        # każdy proces wysyła wszystkim swoje wiersze i odbiera od nich resztę -> wszyscy mają całą membranę
+        # IN_PLACE: moje wiersze już leżą na swoim miejscu w self.h, MPI tylko dopisuje cudze
+        n = self.how_many_partitions_1d
+        rows_per_rank = [batch_size + (1 if r < remainder else 0) for r in range(MPI_size)]
+        counts = [rows * n for rows in rows_per_rank]                 # ile liczb od każdego procesu
+        displs = [sum(counts[:r]) for r in range(MPI_size)]           # gdzie je wpisać, licząc od wiersza 1
+        comm.Allgatherv(MPI.IN_PLACE, [self.h[1:n - 1], counts, displs, MPI.DOUBLE])
 
 
 
