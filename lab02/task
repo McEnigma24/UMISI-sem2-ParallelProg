@@ -1,0 +1,21 @@
+Równoległe sito Erastotenesa.
+
+Celem jest wyznaczenie liczb pierwszych z przedziału A=[2..n]
+
+Korzystamy z obserwacji, że do wyznaczania liczb pierwszych z tego przedziału wystarcza znajomość liczb pierwszych (podzielników) z przedziału B=[2, podłoga(sqrt(n))] -
+
+Każda złożona liczba z A dzieli się przez jeden lub więcej podzielników z B.
+
+
+Sposób postępowania w modelu przesyłania komunikatów (message passing) dla p procesów:
+
+1. Znajdujemy liczby pierwsze w przedziale B (podzielniki) stosując metodę sita Erastotenesa - każdy process robi to za siebie (replikacja obliczeń redukująca komunikację)
+
+
+2. Każdy proces wylicza zakres swójego podprzedziału z przedziału C=A\B czyli C= [podłoga(sqrt(n))+1, n]. Zakres podprzedziału uzyskujemy dzieląc przedział C po równo pomiędzy p procesów (ostatni przedział może być oczywiście krótszy) jest to dekompozycja domenowa
+
+
+3. Każdy proces uzyskuje swój zbiór liczb pierwszych stosując metodę sita Erastotenesa dla swojego podprzedziału używając podzielników z p.1
+
+
+4. Proces zerowy zbiera wszystkie liczby pierwsze od pozostałych procesów (można użyć komunikacji kolektywnej)
