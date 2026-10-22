@@ -94,6 +94,9 @@ if __name__ == "__main__":
                 b_flags[2 : sqrt_n + 1], dtype=dtype, count=sqrt_n - 1
             )
 
+        win.Fence()
+        comm.Barrier()
+
         lo, hi = partition_c(sqrt_n, n, MPI_rank, MPI_size)
         if lo <= hi:
             seg = segment_sieve_flags(lo, hi, divisors)
