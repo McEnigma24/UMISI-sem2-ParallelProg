@@ -1,0 +1,126 @@
+Analiza lab04 — Julia MPIPoolExecutor
+
+============================================================
+TAG: baseline
+============================================================
+Plik: results/lines_baseline.csv, linii: 960, workers: 8
+Czas całkowity programu (MPI.Wtime): 0.395146 s
+
+--- p.3 Czasy linii ---
+Min czas: 0.000357 s (linia 2)
+Max czas: 0.006202 s (linia 644)
+Różnica max-min: 0.005845 s
+
+--- p.4 Przydział linii ---
+Zgodność z podziałem blokowym: 12.19%
+Zgodność z podziałem cyklicznym: 12.71%
+Pierwsze przypisania (linia, rank_faktyczny, rank_oczekiwany blok/cykl):
+  linia 0: rank=1 (blok->1, cykl->1)
+  linia 1: rank=2 (blok->1, cykl->2)
+  linia 2: rank=3 (blok->1, cykl->3)
+  linia 3: rank=4 (blok->1, cykl->4)
+  linia 4: rank=5 (blok->1, cykl->5)
+  linia 5: rank=6 (blok->1, cykl->6)
+  linia 6: rank=7 (blok->1, cykl->7)
+  linia 7: rank=8 (blok->1, cykl->8)
+  linia 8: rank=3 (blok->1, cykl->1)
+  linia 9: rank=2 (blok->1, cykl->2)
+Wniosek: przydział nie jest ani czysto blokowy, ani cykliczny — typowy dynamiczny pool (wolny worker bierze kolejną linię).
+
+--- p.4b Liczba linii na workera ---
+  rank 1: 124 linii
+  rank 2: 115 linii
+  rank 3: 122 linii
+  rank 4: 121 linii
+  rank 5: 121 linii
+  rank 6: 119 linii
+  rank 7: 119 linii
+  rank 8: 119 linii
+
+--- p.5 Suma czasów na workera ---
+  rank 1: 0.274726 s
+  rank 2: 0.276868 s
+  rank 3: 0.288430 s
+  rank 4: 0.283144 s
+  rank 5: 0.282458 s
+  rank 6: 0.284600 s
+  rank 7: 0.277726 s
+  rank 8: 0.283304 s
+Min/max suma: 0.274726 / 0.288430 s, std=0.004272 s
+Suma wszystkich czasów linii: 2.251255 s
+Suma czasów / czas programu = 5.697 (efektywnie ~5.7 równoległych workerów)
+Uwaga: suma czasów workerów >> czas programu, bo linie liczą się równolegle; czas programu ≈ długość ścieżki krytycznej w harmonogramie dynamicznym.
+
+============================================================
+TAG: sleep
+============================================================
+Plik: results/lines_sleep.csv, linii: 960, workers: 8
+Czas całkowity programu (MPI.Wtime): 0.404718 s
+
+--- p.3 Czasy linii ---
+Min czas: 0.000361 s (linia 18)
+Max czas: 0.288899 s (linia 1)
+Różnica max-min: 0.288538 s
+
+--- p.4 Przydział linii ---
+Zgodność z podziałem blokowym: 11.88%
+Zgodność z podziałem cyklicznym: 12.19%
+Pierwsze przypisania (linia, rank_faktyczny, rank_oczekiwany blok/cykl):
+  linia 0: rank=1 (blok->1, cykl->1)
+  linia 1: rank=2 (blok->1, cykl->2)
+  linia 2: rank=3 (blok->1, cykl->3)
+  linia 3: rank=4 (blok->1, cykl->4)
+  linia 4: rank=5 (blok->1, cykl->5)
+  linia 5: rank=6 (blok->1, cykl->6)
+  linia 6: rank=7 (blok->1, cykl->7)
+  linia 7: rank=8 (blok->1, cykl->8)
+  linia 8: rank=1 (blok->1, cykl->1)
+  linia 9: rank=3 (blok->1, cykl->2)
+Wniosek: przydział nie jest ani czysto blokowy, ani cykliczny — typowy dynamiczny pool (wolny worker bierze kolejną linię).
+
+--- p.4b Liczba linii na workera ---
+  rank 1: 131 linii
+  rank 2: 39 linii
+  rank 3: 131 linii
+  rank 4: 134 linii
+  rank 5: 129 linii
+  rank 6: 131 linii
+  rank 7: 134 linii
+  rank 8: 131 linii
+
+--- p.5 Suma czasów na workera ---
+  rank 1: 0.290367 s
+  rank 2: 0.359973 s
+  rank 3: 0.290489 s
+  rank 4: 0.294525 s
+  rank 5: 0.285982 s
+  rank 6: 0.296028 s
+  rank 7: 0.290075 s
+  rank 8: 0.289060 s
+Min/max suma: 0.285982 / 0.359973 s, std=0.023019 s
+Suma wszystkich czasów linii: 2.396500 s
+Suma czasów / czas programu = 5.921 (efektywnie ~5.9 równoległych workerów)
+Uwaga: suma czasów workerów >> czas programu, bo linie liczą się równolegle; czas programu ≈ długość ścieżki krytycznej w harmonogramie dynamicznym.
+
+============================================================
+--- p.6 Baseline vs sleep ---
+Czas programu: 0.395 s -> 0.405 s
+Zgodność blok: 12.2% -> 11.9%; cykl: 12.7% -> 12.2%
+Linie na workera (baseline -> sleep):
+  rank 1: 124 -> 131
+  rank 2: 115 -> 39
+  rank 3: 122 -> 131
+  rank 4: 121 -> 134
+  rank 5: 121 -> 129
+  rank 6: 119 -> 131
+  rank 7: 119 -> 134
+  rank 8: 119 -> 131
+Suma czasów workera (baseline -> sleep):
+  rank 1: 0.275 -> 0.290 s
+  rank 2: 0.277 -> 0.360 s
+  rank 3: 0.288 -> 0.290 s
+  rank 4: 0.283 -> 0.295 s
+  rank 5: 0.282 -> 0.286 s
+  rank 6: 0.285 -> 0.296 s
+  rank 7: 0.278 -> 0.290 s
+  rank 8: 0.283 -> 0.289 s

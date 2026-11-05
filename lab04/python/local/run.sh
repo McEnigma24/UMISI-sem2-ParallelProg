@@ -3,6 +3,10 @@ source "_common_" 2>/dev/null
 
 clear
 rm -f output/*
+mkdir -p results results/plots
 
-proc_number="${1:-4}"
-uv run mpiexec -n "$proc_number" python _src/main.py | tee output/out
+WORKERS="${1:-8}"
+export JULIA_WIDTH=1280
+export JULIA_HEIGHT=960
+
+bash scripts/pipeline.sh local "$WORKERS" | tee output/out

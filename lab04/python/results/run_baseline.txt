@@ -1,0 +1,6 @@
+tag=baseline
+width=1280
+height=960
+mpi_size=9
+workers=8
+total_time=0.395146
