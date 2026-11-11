@@ -1,8 +1,0 @@
-tag=sleep
-width=1280
-height=960
-mpi_size=9
-workers=8
-total_time=0.404718
-sleep_line=1
-sleep_time=0.28842970099503873

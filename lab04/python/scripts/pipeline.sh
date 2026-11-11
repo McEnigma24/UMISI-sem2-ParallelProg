@@ -1,5 +1,5 @@
 #!/bin/bash
-# Wspólny pipeline: baseline → sleep (z sleep z baseline CSV) → analyze
+# pipeline.sh [local|grid] WIDTH HEIGHT [WORKERS]
 set -euo pipefail
 
 source "$(dirname "$0")/../local/_common_" 2>/dev/null || true
@@ -8,12 +8,9 @@ if [[ "$(basename "$PWD")" == "scripts" ]]; then
 fi
 
 MODE="${1:-local}"
-WORKERS="${2:-8}"
-
-export JULIA_WIDTH="${JULIA_WIDTH:-1280}"
-export JULIA_HEIGHT="${JULIA_HEIGHT:-960}"
-
-mkdir -p results results/plots output
+WIDTH="${2:-1280}"
+HEIGHT="${3:-960}"
+WORKERS="${4:-8}"
 
 if [[ "$MODE" == "grid" ]]; then
     NP="${SLURM_NTASKS:?SLURM_NTASKS required}"
@@ -28,25 +25,35 @@ else
     }
 fi
 
-echo "=== Pipeline Julia (mode=$MODE, workers=$WORKERS, NP=$NP, ${JULIA_WIDTH}x${JULIA_HEIGHT}) ==="
+RUN_DIR="results/runs/$(date +%Y-%m-%d_%H-%M-%S)_${WIDTH}x${HEIGHT}_${WORKERS}w"
+mkdir -p "$RUN_DIR/baseline" "$RUN_DIR/sleep" results/runs
+exec > >(tee "$RUN_DIR/log.txt") 2>&1
+
+echo "=== Pipeline Julia ==="
+echo "mode=$MODE workers=$WORKERS NP=$NP ${WIDTH}x${HEIGHT}"
+echo "RUN_DIR=$RUN_DIR"
 
 echo "--- baseline ---"
-launch_mpi --tag baseline
-
-SLEEP_TIME=$(uv run python -c "
-from pathlib import Path
-import sys
-sys.path.insert(0, '_src')
-from julia import max_worker_time_from_csv
-print(f'{max_worker_time_from_csv(Path(\"results/lines_baseline.csv\"), 1.0):.6f}')
-")
+launch_mpi \
+    --width "$WIDTH" \
+    --height "$HEIGHT" \
+    --out-dir "$RUN_DIR/baseline" \
+    --variant baseline
 
 export JULIA_SLEEP_LINE=1
-export JULIA_SLEEP_TIME="$SLEEP_TIME"
-echo "--- sleep (linia 1, sleep=${JULIA_SLEEP_TIME}s) ---"
-launch_mpi --tag sleep --sleep-line 1 --sleep-from results/lines_baseline.csv --sleep-factor 1.0
+echo "--- sleep ---"
+launch_mpi \
+    --width "$WIDTH" \
+    --height "$HEIGHT" \
+    --out-dir "$RUN_DIR/sleep" \
+    --variant sleep \
+    --sleep-line 1 \
+    --sleep-from "$RUN_DIR/baseline" \
+    --sleep-factor 1.0
 
 echo "--- analyze ---"
-uv run python _src/analyze.py
+uv run python _src/analyze.py "$RUN_DIR/baseline"
+uv run python _src/analyze.py "$RUN_DIR/sleep"
 
+echo "RUN_DIR=$RUN_DIR"
 echo "=== Done ==="

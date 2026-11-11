@@ -3,10 +3,10 @@ source "_common_" 2>/dev/null
 
 clear
 rm -f output/*
-mkdir -p results results/plots
+mkdir -p results/runs
 
 WORKERS="${1:-8}"
-export JULIA_WIDTH=1280
-export JULIA_HEIGHT=960
+WIDTH="${2:-1280}"
+HEIGHT="${3:-960}"
 
-bash scripts/pipeline.sh local "$WORKERS" | tee output/out
+bash scripts/pipeline.sh local "$WIDTH" "$HEIGHT" "$WORKERS" 2>&1 | tee output/out

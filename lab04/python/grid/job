@@ -2,10 +2,10 @@
 #SBATCH --job-name=JULIA_POOL
 #SBATCH --account=plgar2026-cpu
 #SBATCH --partition=plgrid
-#SBATCH --time=00:20:00
+#SBATCH --time=04:00:00
 #SBATCH --ntasks=17
 #SBATCH --cpus-per-task=1
-#SBATCH --mem=16G
+#SBATCH --mem=32G
 #SBATCH --output=output/out_%j.txt
 #SBATCH --error=output/err_%j.txt
 
@@ -15,11 +15,14 @@ cd "$SLURM_SUBMIT_DIR"
 
 module load openmpi/4.1.6-gcc-13.2.0
 
-export JULIA_WIDTH=1280
-export JULIA_HEIGHT=960
+export JULIA_WIDTH="${JULIA_WIDTH:-1280}"
+export JULIA_HEIGHT="${JULIA_HEIGHT:-960}"
 
-echo "GRID_JOB -> STARTED (SLURM_NTASKS=$SLURM_NTASKS)"
+WORKERS=$((SLURM_NTASKS - 1))
+echo "GRID_JOB -> STARTED (SLURM_NTASKS=$SLURM_NTASKS workers=$WORKERS, ${JULIA_WIDTH}x${JULIA_HEIGHT})"
 
-bash scripts/pipeline.sh grid
+bash scripts/pipeline.sh grid "$JULIA_WIDTH" "$JULIA_HEIGHT"
+
+echo "GRID_JOB -> wyniki w results/runs/ (log też w RUN_DIR/log.txt)"
 
 echo "GRID_JOB -> ENDED"

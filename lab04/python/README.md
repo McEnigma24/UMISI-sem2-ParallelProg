@@ -1,39 +1,24 @@
-# Lab04 — zbiór Julii (MPIPoolExecutor)
+# Lab04 — Julia + MPIPoolExecutor
 
-## Uruchomienie
-
-**Lokalnie (WSL):**
+### Lokalnie
 
 ```bash
-cd lab04/python
-bash local/run.sh          # domyślnie 8 workerów (9 procesów MPI)
-bash local/run.sh 4        # 4 workery
+bash local/run.sh [workers] [width] [height]   # domyślnie 8, 1280, 960
+bash local/sweep.sh                             # tablice WORKERS i SIZES w pliku
 ```
 
-Wyjście: `output/out`, wyniki: `results/` (CSV, PGM, `summary.txt`, wykresy w `results/plots/`).
-
-**PLGrid (Ares):**
+### PLGrid (Ares, partycja `plgrid`)
 
 ```bash
-cd lab04/python
-bash grid/run.sh           # sbatch → kolejka plgrid, 16 workerów + master
+bash grid/run.sh      # jeden job — edytuj WORKERS i SIZES_ITEM w pliku
+bash grid/sweep.sh    # pętla workerów × rozmiarów, wiele sbatch
+bash grid/status.sh   # status ostatnich jobów (jeśli używasz)
 ```
 
-Job: [`grid/job`](grid/job) — `--partition=plgrid`, `--ntasks=17`, ten sam pipeline co lokalnie (`scripts/pipeline.sh grid`).
+Zgłoszone job ID: `grid/submitted_jobs.txt`, ostatni pojedynczy: `grid/.latest_job_started`.
 
-## Pliki
+Wyniki jak lokalnie: `results/runs/<data>_<W>x<H>_<N>w/{baseline,sleep}/` + `log.txt`.  
+Slurm stdout: `output/out_<jobid>.txt`.
 
-| Plik | Opis |
-|------|------|
-| [`_src/julia.py`](_src/julia.py) | Obliczenia + `MPIPoolExecutor`, pomiar czasu linii |
-| [`_src/analyze.py`](_src/analyze.py) | Analiza zadań 3–6, wykresy |
-| [`scripts/pipeline.sh`](scripts/pipeline.sh) | baseline → sleep → analyze |
-| [`REPORT.md`](REPORT.md) | Odpowiedzi na polecenia + PCAM |
-
-Wywołanie zgodne z treścią ćwiczenia:
-
-```bash
-mpiexec -n <workers+1> python -m mpi4py.futures _src/julia.py --tag baseline
-```
-
-(lokalnie przez `uv run mpiexec --oversubscribe ...`).
+Kod: `_src/julia.py`, `_src/analyze.py`, `scripts/pipeline.sh`.  
+Raport (PCAM): [REPORT.md](REPORT.md).

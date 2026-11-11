@@ -1,12 +1,10 @@
 #!/usr/bin/env python3
-"""Analiza wyników Julia + MPIPoolExecutor (p. 3–6 z lab04)."""
+"""Wykresy mini-raportu dla jednego przebiegu (baseline lub sleep)."""
 
 from __future__ import annotations
 
 import argparse
-import csv
-import sys
-from collections import defaultdict
+import json
 from pathlib import Path
 
 import matplotlib
@@ -14,302 +12,295 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
+from matplotlib.colors import hsv_to_rgb
+from matplotlib.patches import Patch
 
-TAGS = ("baseline", "sleep")
-
-
-def load_lines(csv_path: Path) -> list[dict]:
-    with csv_path.open(newline="") as f:
-        return list(csv.DictReader(f))
+PHI = (5**0.5 - 1) / 2
 
 
-def load_run_info(run_path: Path) -> dict[str, str]:
-    info: dict[str, str] = {}
-    if not run_path.is_file():
-        return info
-    for line in run_path.read_text().splitlines():
-        if "=" in line:
-            k, v = line.split("=", 1)
-            info[k.strip()] = v.strip()
-    return info
+def load_run(run_dir: Path):
+    meta = json.loads((run_dir / "meta.json").read_text(encoding="utf-8"))
+    data = np.load(run_dir / "data.npz")
+    return meta, data["image"], data["ranks"], data["times"], data["slept"]
 
 
-def worker_ranks(rows: list[dict]) -> list[int]:
-    return sorted({int(r["rank"]) for r in rows})
+def worker_ranks_sorted(ranks: np.ndarray) -> list[int]:
+    return sorted(int(r) for r in np.unique(ranks))
 
 
-def lines_per_worker(rows: list[dict]) -> dict[int, int]:
-    c: dict[int, int] = defaultdict(int)
-    for r in rows:
-        c[int(r["rank"])] += 1
-    return dict(c)
+def rank_to_proc_index(ranks: np.ndarray, wr: list[int]) -> np.ndarray:
+    m = {r: i for i, r in enumerate(wr)}
+    return np.array([m[int(r)] for r in ranks], dtype=np.int32)
 
 
-def time_per_worker(rows: list[dict]) -> dict[int, float]:
-    s: dict[int, float] = defaultdict(float)
-    for r in rows:
-        s[int(r["rank"])] += float(r["time"])
-    return dict(s)
+def palette(n: int) -> np.ndarray:
+    if n <= 20:
+        cmap = matplotlib.colormaps.get_cmap("tab20").resampled(n)
+        return cmap(np.arange(n))[:, :3]
+    colors = []
+    for i in range(n):
+        hue = (i * PHI) % 1.0
+        colors.append(hsv_to_rgb([hue, 0.85, 0.95]))
+    return np.array(colors)
 
 
-def line_time_stats(rows: list[dict]) -> tuple[float, float, float, int, int]:
-    times = [(int(r["line"]), float(r["time"])) for r in rows]
-    tvals = [t for _, t in times]
-    tmin = min(tvals)
-    tmax = max(tvals)
-    lmin = min(line for line, t in times if t == tmin)
-    lmax = min(line for line, t in times if t == tmax)
-    return tmin, tmax, tmax - tmin, lmin, lmax
+def assignment_metrics(ranks: np.ndarray, proc_idx: np.ndarray, n_workers: int) -> dict:
+    h = len(ranks)
+    p = n_workers
+    if h < 2 or p < 1:
+        return {
+            "B": 0.0,
+            "C": 0.0,
+            "B_norm": 0.0,
+            "C_norm": 0.0,
+            "num_segments": 0,
+        }
 
+    same_next = proc_idx[:-1] == proc_idx[1:]
+    b = float(np.mean(same_next))
 
-def predict_block_rank(line: int, height: int, ranks: list[int]) -> int:
-    w = len(ranks)
-    chunk = (height + w - 1) // w
-    idx = min(line // chunk, w - 1)
-    return ranks[idx]
+    if h > p:
+        same_p = proc_idx[:-p] == proc_idx[p:]
+        c = float(np.mean(same_p))
+    else:
+        c = 0.0
 
+    rand = 1.0 / p
+    if p > 1:
+        b_norm = (b - rand) / (1.0 - rand)
+        c_norm = (c - rand) / (1.0 - rand)
+    else:
+        b_norm = 0.0
+        c_norm = 0.0
 
-def predict_cyclic_rank(line: int, ranks: list[int]) -> int:
-    w = len(ranks)
-    return ranks[line % w]
-
-
-def assignment_hypothesis(rows: list[dict], height: int, mode: str) -> tuple[float, list[tuple[int, int, int]]]:
-    ranks = worker_ranks(rows)
-    samples: list[tuple[int, int, int]] = []
-    ok = 0
-    for r in rows:
-        line = int(r["line"])
-        actual = int(r["rank"])
-        if mode == "block":
-            expected = predict_block_rank(line, height, ranks)
-        else:
-            expected = predict_cyclic_rank(line, ranks)
-        if len(samples) < 30:
-            samples.append((line, actual, expected))
-        if actual == expected:
-            ok += 1
-    pct = 100.0 * ok / len(rows) if rows else 0.0
-    return pct, samples
-
-
-def read_pgm(path: Path) -> np.ndarray:
-    with path.open("rb") as f:
-        magic = f.readline()
-        if not magic.startswith(b"P5"):
-            raise ValueError(f"Nieobsługiwany format PGM: {magic!r}")
-        line = f.readline()
-        while line.startswith(b"#"):
-            line = f.readline()
-        w, h = map(int, line.split())
-        maxval = int(f.readline())
-        if maxval > 255:
-            raise ValueError("PGM maxval > 255")
-        data = np.frombuffer(f.read(), dtype=np.uint8)
-    return data.reshape(h, w)
-
-
-def plot_all(
-    tag: str,
-    rows: list[dict],
-    total_time: float,
-    height: int,
-    results_dir: Path,
-    plots_dir: Path,
-):
-    plots_dir.mkdir(parents=True, exist_ok=True)
-    lines = np.array([int(r["line"]) for r in rows])
-    times = np.array([float(r["time"]) for r in rows])
-    ranks = np.array([int(r["rank"]) for r in rows])
-    wr = worker_ranks(rows)
-    lpc = lines_per_worker(rows)
-    tpc = time_per_worker(rows)
-
-    fig, ax = plt.subplots(figsize=(10, 4))
-    sc = ax.scatter(lines, times, c=ranks, cmap="tab10", s=8, alpha=0.7)
-    ax.set_xlabel("Numer linii")
-    ax.set_ylabel("Czas linii [s]")
-    ax.set_title(f"Czas obliczeń linii ({tag}) — kolor = rank workera")
-    plt.colorbar(sc, ax=ax, label="rank")
-    fig.tight_layout()
-    fig.savefig(plots_dir / f"line_time_{tag}.png", dpi=150)
-    plt.close(fig)
-
-    fig, ax = plt.subplots(figsize=(10, 4))
-    ax.scatter(lines, ranks, s=6, alpha=0.5)
-    ax.set_xlabel("Numer linii")
-    ax.set_ylabel("Rank workera")
-    ax.set_title(f"Przydział linii do workerów ({tag})")
-    ax.set_yticks(wr)
-    fig.tight_layout()
-    fig.savefig(plots_dir / f"line_rank_{tag}.png", dpi=150)
-    plt.close(fig)
-
-    fig, ax = plt.subplots(figsize=(7, 4))
-    xs = [str(r) for r in wr]
-    ys = [lpc.get(r, 0) for r in wr]
-    ax.bar(xs, ys)
-    ax.set_xlabel("Rank workera")
-    ax.set_ylabel("Liczba linii")
-    ax.set_title(f"Linie na workera ({tag})")
-    fig.tight_layout()
-    fig.savefig(plots_dir / f"lines_per_worker_{tag}.png", dpi=150)
-    plt.close(fig)
-
-    fig, ax = plt.subplots(figsize=(7, 4))
-    ys2 = [tpc.get(r, 0) for r in wr]
-    ax.bar(xs, ys2)
-    ax.axhline(total_time, color="red", linestyle="--", label=f"czas programu = {total_time:.3f} s")
-    ax.set_xlabel("Rank workera")
-    ax.set_ylabel("Suma czasów linii [s]")
-    ax.set_title(f"Suma czasów workera vs czas całkowity ({tag})")
-    ax.legend()
-    fig.tight_layout()
-    fig.savefig(plots_dir / f"time_per_worker_{tag}.png", dpi=150)
-    plt.close(fig)
-
-    pgm = results_dir / f"julia_{tag}.pgm"
-    if pgm.is_file():
-        img = read_pgm(pgm)
-        fig, ax = plt.subplots(figsize=(8, 6))
-        ax.imshow(img, cmap="gray", origin="upper")
-        ax.set_title(f"Zbiór Julii ({tag})")
-        ax.axis("off")
-        fig.tight_layout()
-        fig.savefig(plots_dir / f"julia_{tag}.png", dpi=150)
-        plt.close(fig)
-
-
-def analyze_tag(
-    tag: str,
-    out_lines: list[str],
-    results_dir: Path,
-    plots_dir: Path,
-) -> dict:
-    csv_path = results_dir / f"lines_{tag}.csv"
-    run_path = results_dir / f"run_{tag}.txt"
-    rows = load_lines(csv_path)
-    info = load_run_info(run_path)
-    height = int(info.get("height", len(rows)))
-    total_time = float(info.get("total_time", 0))
-
-    out_lines.append(f"\n{'=' * 60}")
-    out_lines.append(f"TAG: {tag}")
-    out_lines.append(f"{'=' * 60}")
-    out_lines.append(f"Plik: {csv_path}, linii: {len(rows)}, workers: {info.get('workers', '?')}")
-    out_lines.append(f"Czas całkowity programu (MPI.Wtime): {total_time:.6f} s")
-
-    tmin, tmax, tdiff, lmin, lmax = line_time_stats(rows)
-    out_lines.append("\n--- p.3 Czasy linii ---")
-    out_lines.append(f"Min czas: {tmin:.6f} s (linia {lmin})")
-    out_lines.append(f"Max czas: {tmax:.6f} s (linia {lmax})")
-    out_lines.append(f"Różnica max-min: {tdiff:.6f} s")
-
-    pct_b, samp_b = assignment_hypothesis(rows, height, "block")
-    pct_c, samp_c = assignment_hypothesis(rows, height, "cyclic")
-    out_lines.append("\n--- p.4 Przydział linii ---")
-    out_lines.append(f"Zgodność z podziałem blokowym: {pct_b:.2f}%")
-    out_lines.append(f"Zgodność z podziałem cyklicznym: {pct_c:.2f}%")
-    out_lines.append("Pierwsze przypisania (linia, rank_faktyczny, rank_oczekiwany blok/cykl):")
-    for i in range(min(10, len(samp_b))):
-        lb, ab, eb = samp_b[i]
-        _, ac, ec = samp_c[i]
-        out_lines.append(f"  linia {lb}: rank={ab} (blok->{eb}, cykl->{ec})")
-    if pct_b < 50 and pct_c < 50:
-        out_lines.append(
-            "Wniosek: przydział nie jest ani czysto blokowy, ani cykliczny — "
-            "typowy dynamiczny pool (wolny worker bierze kolejną linię)."
-        )
-
-    lpc = lines_per_worker(rows)
-    out_lines.append("\n--- p.4b Liczba linii na workera ---")
-    for r in sorted(lpc):
-        out_lines.append(f"  rank {r}: {lpc[r]} linii")
-
-    tpc = time_per_worker(rows)
-    sums = list(tpc.values())
-    out_lines.append("\n--- p.5 Suma czasów na workera ---")
-    for r in sorted(tpc):
-        out_lines.append(f"  rank {r}: {tpc[r]:.6f} s")
-    if sums:
-        out_lines.append(
-            f"Min/max suma: {min(sums):.6f} / {max(sums):.6f} s, "
-            f"std={np.std(sums):.6f} s"
-        )
-    sum_all = sum(sums)
-    out_lines.append(f"Suma wszystkich czasów linii: {sum_all:.6f} s")
-    if total_time > 0:
-        eff = sum_all / total_time
-        out_lines.append(
-            f"Suma czasów / czas programu = {eff:.3f} "
-            f"(efektywnie ~{eff:.1f} równoległych workerów)"
-        )
-    out_lines.append(
-        "Uwaga: suma czasów workerów >> czas programu, bo linie liczą się równolegle; "
-        "czas programu ≈ długość ścieżki krytycznej w harmonogramie dynamicznym."
-    )
-
-    plot_all(tag, rows, total_time, height, results_dir, plots_dir)
+    segments = 1
+    for i in range(1, h):
+        if proc_idx[i] != proc_idx[i - 1]:
+            segments += 1
 
     return {
-        "tag": tag,
-        "total_time": total_time,
-        "pct_block": pct_b,
-        "pct_cyclic": pct_c,
-        "lines_per_worker": lpc,
-        "time_per_worker": tpc,
-        "tdiff": tdiff,
+        "B": b,
+        "C": c,
+        "B_norm": b_norm,
+        "C_norm": c_norm,
+        "num_segments": segments,
+        "n_workers": p,
+        "n_lines": h,
     }
 
 
-def compare_baseline_sleep(stats: dict, out_lines: list[str]):
-    if "baseline" not in stats or "sleep" not in stats:
-        return
-    b = stats["baseline"]
-    s = stats["sleep"]
-    out_lines.append(f"\n{'=' * 60}")
-    out_lines.append("--- p.6 Baseline vs sleep ---")
-    out_lines.append(f"Czas programu: {b['total_time']:.3f} s -> {s['total_time']:.3f} s")
-    out_lines.append(
-        f"Zgodność blok: {b['pct_block']:.1f}% -> {s['pct_block']:.1f}%; "
-        f"cykl: {b['pct_cyclic']:.1f}% -> {s['pct_cyclic']:.1f}%"
+def times_for_hist(times: np.ndarray, slept: np.ndarray, sleep_line: int | None):
+    mask = np.ones(len(times), dtype=bool)
+    if sleep_line is not None and 0 <= sleep_line < len(times):
+        if slept[sleep_line] > 0:
+            mask[sleep_line] = False
+    return times[mask], times
+
+
+def plot_hist(run_dir: Path, times: np.ndarray, slept: np.ndarray, meta: dict):
+    sleep_line = meta.get("sleep_line")
+    hist_times, all_times = times_for_hist(times, slept, sleep_line)
+    tmin_i = int(np.argmin(all_times))
+    tmax_i = int(np.argmax(all_times))
+
+    if len(hist_times) < 2:
+        edges = np.linspace(0, max(all_times.max(), 1e-9), 21)
+    else:
+        edges = np.histogram_bin_edges(hist_times, bins="fd")
+        n_bins = len(edges) - 1
+        if n_bins < 20:
+            edges = np.histogram_bin_edges(hist_times, bins=max(20, n_bins))
+        elif n_bins > 100:
+            edges = np.histogram_bin_edges(hist_times, bins=100)
+
+    fig, ax = plt.subplots(figsize=(8, 4))
+    ax.hist(hist_times, bins=edges, edgecolor="0.3", color="steelblue")
+    ax.set_xlabel("Czas linii [s]")
+    ax.set_ylabel("Liczba linii")
+
+    diff = float(all_times.max() - all_times.min())
+    stats = (
+        f"min: {all_times.min():.6f} s (linia {tmin_i})\n"
+        f"max: {all_times.max():.6f} s (linia {tmax_i})\n"
+        f"max-min: {diff:.6f} s\n"
+        f"mediana: {np.median(all_times):.6f} s"
     )
-    out_lines.append("Linie na workera (baseline -> sleep):")
-    all_r = sorted(set(b["lines_per_worker"]) | set(s["lines_per_worker"]))
-    for r in all_r:
-        out_lines.append(
-            f"  rank {r}: {b['lines_per_worker'].get(r, 0)} -> {s['lines_per_worker'].get(r, 0)}"
+    if sleep_line is not None and meta.get("variant") == "sleep":
+        stats += f"\n(sleep linia {sleep_line}: {times[sleep_line]:.6f} s)"
+
+    fig.text(0.98, 0.5, stats, va="center", ha="right", fontsize=9, family="monospace")
+    fig.tight_layout(rect=[0, 0, 0.82, 1])
+    fig.savefig(run_dir / "hist_line_time.png", dpi=150)
+    plt.close(fig)
+
+    return {
+        "time_min": float(all_times.min()),
+        "time_max": float(all_times.max()),
+        "time_diff": diff,
+        "time_min_line": tmin_i,
+        "time_max_line": tmax_i,
+        "time_median": float(np.median(all_times)),
+    }
+
+
+def build_assignment_rgb(h: int, w: int, proc_idx: np.ndarray, colors: np.ndarray) -> np.ndarray:
+    rgb = np.zeros((h, w, 3), dtype=np.float32)
+    for k in range(h):
+        rgb[k, :, :] = colors[proc_idx[k]]
+    return rgb
+
+
+def plot_assignment_maps(
+    run_dir: Path,
+    image: np.ndarray,
+    proc_idx: np.ndarray,
+    wr: list[int],
+    colors: np.ndarray,
+    metrics: dict,
+):
+    h, w = image.shape
+    assign = build_assignment_rgb(h, w, proc_idx, colors)
+    overlay = assign * (image.astype(np.float32) / 255.0)[:, :, np.newaxis]
+
+    plt.imsave(run_dir / "assignment_map.png", assign, origin="upper")
+    plt.imsave(run_dir / "assignment_overlay.png", np.clip(overlay, 0, 1), origin="upper")
+
+    fig, ax = plt.subplots(figsize=(min(10, w / 80), min(8, h / 80)))
+    ax.imshow(assign, origin="upper", aspect="auto")
+    ax.set_xticks([])
+    ax.set_yticks([])
+    patches = [
+        Patch(facecolor=colors[i], label=f"proc{i + 1} (rank {wr[i]})") for i in range(len(wr))
+    ]
+    ax.legend(handles=patches, loc="upper left", bbox_to_anchor=(1.02, 1), fontsize=8)
+    box = (
+        f"B (sąsiednie): {metrics['B']:.4f}  B_norm: {metrics['B_norm']:.4f}\n"
+        f"C (odstęp P): {metrics['C']:.4f}  C_norm: {metrics['C_norm']:.4f}\n"
+        f"Segmenty: {metrics['num_segments']}  (blok ~P={metrics['n_workers']}, cykl ~H)"
+    )
+    fig.text(0.02, 0.02, box, fontsize=8, family="monospace", va="bottom")
+    fig.tight_layout()
+    fig.savefig(run_dir / "assignment_map_annotated.png", dpi=150, bbox_inches="tight")
+    plt.close(fig)
+
+
+def plot_julia(run_dir: Path, image: np.ndarray):
+    fig, ax = plt.subplots(figsize=(8, 6))
+    ax.imshow(image, cmap="gray", origin="upper")
+    ax.axis("off")
+    fig.tight_layout()
+    fig.savefig(run_dir / "julia.png", dpi=150)
+    plt.close(fig)
+
+
+def count_and_sum_per_worker(
+    proc_idx: np.ndarray, times: np.ndarray, n_workers: int
+) -> tuple[np.ndarray, np.ndarray]:
+    counts = np.zeros(n_workers, dtype=np.int32)
+    sums = np.zeros(n_workers, dtype=np.float64)
+    for i, t in zip(proc_idx, times, strict=True):
+        counts[i] += 1
+        sums[i] += t
+    return counts, sums
+
+
+def plot_lines_per_worker(run_dir: Path, counts: np.ndarray, h: int):
+    n = len(counts)
+    labels = [f"proc{i + 1}" for i in range(n)]
+    fig, ax = plt.subplots(figsize=(max(6, n * 0.5), 4))
+    ax.bar(labels, counts, color="steelblue")
+    ax.axhline(h / n, color="gray", linestyle="--", label=f"średnia {h / n:.1f}")
+    ax.set_ylabel("Liczba linii")
+    ax.legend()
+    fig.tight_layout()
+    fig.savefig(run_dir / "lines_per_worker.png", dpi=150)
+    plt.close(fig)
+
+
+def plot_time_per_worker(
+    run_dir: Path,
+    sums: np.ndarray,
+    colors: np.ndarray,
+    wall: float,
+):
+    n = len(sums)
+    max_busy = float(sums.max())
+    overhead = max(0.0, wall - max_busy)
+
+    fig, ax = plt.subplots(figsize=(max(7, (n + 1) * 0.55), 4))
+    ax.bar(0, max_busy, color="#666666", label="max worker busy")
+    ax.bar(0, overhead, bottom=max_busy, color="#cccccc", label="narzut równoległości")
+    if max_busy > 0:
+        ax.text(0, max_busy / 2, f"{max_busy:.4f}s", ha="center", va="center", fontsize=8)
+    if overhead > 0:
+        ax.text(
+            0,
+            max_busy + overhead / 2,
+            f"{overhead:.4f}s",
+            ha="center",
+            va="center",
+            fontsize=8,
         )
-    out_lines.append("Suma czasów workera (baseline -> sleep):")
-    for r in all_r:
-        out_lines.append(
-            f"  rank {r}: {b['time_per_worker'].get(r, 0):.3f} -> {s['time_per_worker'].get(r, 0):.3f} s"
-        )
+
+    xs = np.arange(1, n + 1)
+    ax.bar(xs, sums, color=colors[:n])
+    labels = ["wall"] + [f"proc{i + 1}" for i in range(n)]
+    ax.set_xticks(np.arange(0, n + 1), labels)
+    ax.axhline(wall, color="red", linestyle="--", linewidth=1.5, label=f"wall {wall:.4f}s")
+    ax.set_ylabel("Czas [s]")
+    ax.legend(fontsize=8)
+    fig.tight_layout()
+    fig.savefig(run_dir / "time_per_worker.png", dpi=150)
+    plt.close(fig)
+
+
+def analyze(run_dir: Path) -> dict:
+    meta, image, ranks, times, slept = load_run(run_dir)
+    h, w = image.shape
+    wr = worker_ranks_sorted(ranks)
+    n_workers = len(wr)
+    proc_idx = rank_to_proc_index(ranks, wr)
+    colors = palette(n_workers)
+
+    metrics_assign = assignment_metrics(ranks, proc_idx, n_workers)
+    hist_stats = plot_hist(run_dir, times, slept, meta)
+    plot_assignment_maps(run_dir, image, proc_idx, wr, colors, metrics_assign)
+    plot_julia(run_dir, image)
+
+    counts, sums = count_and_sum_per_worker(proc_idx, times, n_workers)
+    plot_lines_per_worker(run_dir, counts, h)
+    wall = float(meta["wall_time"])
+    plot_time_per_worker(run_dir, sums, colors, wall)
+
+    out = {
+        **meta,
+        **metrics_assign,
+        **hist_stats,
+        "lines_per_worker": counts.tolist(),
+        "time_per_worker": [float(x) for x in sums],
+        "worker_ranks": wr,
+        "max_worker_busy": float(sums.max()),
+        "parallel_overhead": max(0.0, wall - float(sums.max())),
+    }
+    (run_dir / "metrics.json").write_text(
+        json.dumps(out, indent=2),
+        encoding="utf-8",
+    )
+    return out
 
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--results-dir", type=Path, default=Path("results"))
+    parser.add_argument(
+        "run_dir",
+        type=Path,
+        help="katalog z data.npz i meta.json (np. results/runs/.../baseline)",
+    )
     args = parser.parse_args()
-    results_dir = args.results_dir
-    plots_dir = results_dir / "plots"
-
-    out_lines: list[str] = ["Analiza lab04 — Julia MPIPoolExecutor"]
-    stats: dict[str, dict] = {}
-    for tag in TAGS:
-        csv_path = results_dir / f"lines_{tag}.csv"
-        if not csv_path.is_file():
-            print(f"Brak {csv_path}, pomijam tag {tag}", file=sys.stderr)
-            continue
-        stats[tag] = analyze_tag(tag, out_lines, results_dir, plots_dir)
-
-    compare_baseline_sleep(stats, out_lines)
-
-    summary_path = results_dir / "summary.txt"
-    text = "\n".join(out_lines) + "\n"
-    summary_path.write_text(text)
-    print(text)
-    print(f"Zapisano {summary_path} i wykresy w {plots_dir}/")
+    if not (args.run_dir / "data.npz").is_file():
+        raise SystemExit(f"Brak data.npz w {args.run_dir}")
+    analyze(args.run_dir)
+    print(f"Wykresy w {args.run_dir}")
 
 
 if __name__ == "__main__":
