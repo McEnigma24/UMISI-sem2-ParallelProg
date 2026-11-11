@@ -1,0 +1,32 @@
+#!/bin/bash
+#SBATCH --job-name=TSP_BNB
+#SBATCH --account=plgar2026-cpu
+#SBATCH --partition=plgrid
+#SBATCH --time=04:00:00
+#SBATCH --ntasks=17
+#SBATCH --cpus-per-task=1
+#SBATCH --mem=32G
+#SBATCH --output=output/out_%j.txt
+#SBATCH --error=output/err_%j.txt
+
+source "_common_" 2>/dev/null
+
+cd "$SLURM_SUBMIT_DIR"
+
+module load openmpi/4.1.6-gcc-13.2.0
+
+export TSP_N="${TSP_N:-14}"
+export TSP_WORKERS=$((SLURM_NTASKS - 1))
+export TSP_D_LIST="${TSP_D_LIST:-1 2 3 4 5}"
+export TSP_SEED="${TSP_SEED:-42}"
+export TSP_REPEATS="${TSP_REPEATS:-1}"
+
+echo "GRID_JOB -> STARTED (SLURM_NTASKS=$SLURM_NTASKS workers=$TSP_WORKERS N=$TSP_N D_LIST=$TSP_D_LIST)"
+
+for d in $TSP_D_LIST; do
+    echo "GRID_JOB -> d=$d"
+    bash scripts/pipeline.sh grid "$TSP_N" "$d" "$TSP_WORKERS" "$TSP_REPEATS" "$TSP_SEED"
+done
+
+echo "GRID_JOB -> wyniki w results/grid/"
+echo "GRID_JOB -> ENDED"

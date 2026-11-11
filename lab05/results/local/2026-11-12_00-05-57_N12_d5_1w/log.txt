@@ -1,0 +1,10 @@
+=== Pipeline TSP B&B ===
+mode=local N=12 depth=5 workers=1 NP=2 repeats=1 seed=42
+RUN_DIR=results/local/2026-11-12_00-05-57_N12_d5_1w
+--- rep 1/1 ---
+N=12 d=5 workers=1 wall_time=41.040484 s best=5.956707 opt=5.956707 correct=True
+Zapisano: results/local/2026-11-12_00-05-57_N12_d5_1w/rep1/data.npz, results/local/2026-11-12_00-05-57_N12_d5_1w/rep1/meta.json
+--- analyze rep 1 ---
+Wykresy w results/local/2026-11-12_00-05-57_N12_d5_1w/rep1
+RUN_DIR=results/local/2026-11-12_00-05-57_N12_d5_1w
+=== Done ===

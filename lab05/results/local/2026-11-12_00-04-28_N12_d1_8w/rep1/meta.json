@@ -1,0 +1,16 @@
+{
+  "platform": "local",
+  "n": 12,
+  "depth": 1,
+  "seed": 42,
+  "workers": 8,
+  "mpi_size": 9,
+  "n_tasks": 1,
+  "wall_time": 0.397541527,
+  "chunksize": 1,
+  "best_cost": 5.956706830174015,
+  "optimal_known": 5.956706830174016,
+  "correct": true,
+  "timestamp_utc": "2026-11-11T23:04:30.576134+00:00",
+  "hostname": "Stacjonarny"
+}

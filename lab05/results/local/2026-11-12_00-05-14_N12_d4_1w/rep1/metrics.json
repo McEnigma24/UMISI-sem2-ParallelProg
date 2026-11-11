@@ -1,0 +1,28 @@
+{
+  "platform": "local",
+  "n": 12,
+  "depth": 4,
+  "seed": 42,
+  "workers": 1,
+  "mpi_size": 2,
+  "n_tasks": 990,
+  "wall_time": 11.444040075,
+  "chunksize": 1,
+  "best_cost": 5.956706830174015,
+  "optimal_known": 5.956706830174016,
+  "correct": true,
+  "timestamp_utc": "2026-11-11T23:05:26.882208+00:00",
+  "hostname": "Stacjonarny",
+  "tasks_per_worker": [
+    990
+  ],
+  "time_per_worker": [
+    9.167272528917238
+  ],
+  "total_nodes": 4227076,
+  "worker_ranks": [
+    1
+  ],
+  "max_worker_busy": 9.167272528917238,
+  "parallel_overhead": 2.2767675460827625
+}
