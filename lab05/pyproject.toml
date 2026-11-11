@@ -1,5 +1,5 @@
 [project]
-name = "lab05-tsp"
+name = "test"
 version = "0.1.0"
 description = "Parallel TSP branch-and-bound (MPIPoolExecutor)"
 readme = "README.md"
