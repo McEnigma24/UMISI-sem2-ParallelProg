@@ -4,21 +4,23 @@
 
 ```bash
 bash local/run.sh [workers] [width] [height]   # domyślnie 8, 1280, 960
-bash local/sweep.sh                             # tablice WORKERS i SIZES w pliku
+bash local/sweep.sh                             # WORKERS × SIZES w pliku
 ```
+
+**Wyniki:** `results/local/<data>_<W>x<H>_<N>w/{baseline,sleep}/` + `log.txt`  
+Na końcu sweepu: `results/compare/` (local vs grid).
 
 ### PLGrid (Ares, partycja `plgrid`)
 
 ```bash
-bash grid/run.sh      # jeden job — edytuj WORKERS i SIZES_ITEM w pliku
-bash grid/sweep.sh    # pętla workerów × rozmiarów, wiele sbatch
-bash grid/status.sh   # status ostatnich jobów (jeśli używasz)
+bash grid/run.sh      # jeden job — edytuj WORKERS i SIZES_ITEM
+bash grid/sweep.sh
 ```
 
-Zgłoszone job ID: `grid/submitted_jobs.txt`, ostatni pojedynczy: `grid/.latest_job_started`.
+**Wyniki:** `results/grid/...`  
+Po pobraniu: `uv run python _src/compare.py`
 
-Wyniki jak lokalnie: `results/runs/<data>_<W>x<H>_<N>w/{baseline,sleep}/` + `log.txt`.  
-Slurm stdout: `output/out_<jobid>.txt`.
+Przy największym rozmiarze sweep ma też warianty: **szerszy** (więcej W), **dłuższy** (więcej H), **mniejszy 4:3** (mniej Mpx, podobne proporcje).
 
-Kod: `_src/julia.py`, `_src/analyze.py`, `scripts/pipeline.sh`.  
-Raport (PCAM): [REPORT.md](REPORT.md).
+Kod: `_src/julia.py`, `_src/analyze.py`, `_src/compare.py`, `scripts/pipeline.sh`.  
+Raport: [REPORT.md](REPORT.md).

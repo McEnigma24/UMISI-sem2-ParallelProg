@@ -23,6 +23,5 @@ echo "GRID_JOB -> STARTED (SLURM_NTASKS=$SLURM_NTASKS workers=$WORKERS, ${JULIA_
 
 bash scripts/pipeline.sh grid "$JULIA_WIDTH" "$JULIA_HEIGHT"
 
-echo "GRID_JOB -> wyniki w results/runs/ (log też w RUN_DIR/log.txt)"
-
+echo "GRID_JOB -> wyniki w results/grid/ (log w RUN_DIR/log.txt)"
 echo "GRID_JOB -> ENDED"

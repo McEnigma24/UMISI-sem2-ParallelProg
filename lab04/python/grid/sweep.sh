@@ -2,10 +2,12 @@
 source "_common_" 2>/dev/null
 source "grid/common_submit.sh"
 
-# Na Aresie zwykle większe joby niż lokalnie — edytuj listy wg potrzeb.
-WORKERS=(8 16 24 32 48)
+WORKERS=(4 8 12 16 24 32 48)
 
 SIZES=(
+    320x240
+    640x480
+    960x720
     1280x960
     1600x1200
     1920x1440
@@ -14,6 +16,9 @@ SIZES=(
     3840x2880
     5120x3840
     6400x4800
+    9600x4800   # szerszy
+    6400x7200   # dłuższy
+    4800x3600   # mniej Mpx, 4:3
 )
 
 LOG="grid/submitted_jobs.txt"
@@ -34,3 +39,4 @@ for n in "${WORKERS[@]}"; do
 done
 
 echo "Zgłoszono joby. Lista: $LOG"
+echo "Po pobraniu wyników: uv run python _src/compare.py"

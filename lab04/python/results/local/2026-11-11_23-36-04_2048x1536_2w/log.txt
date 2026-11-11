@@ -1,0 +1,15 @@
+=== Pipeline Julia ===
+mode=local results=results/local workers=2 NP=3 2048x1536
+RUN_DIR=results/local/2026-11-11_23-36-04_2048x1536_2w
+--- baseline ---
+variant=baseline workers=2 wall_time=3.283984 s
+Zapisano: results/local/2026-11-11_23-36-04_2048x1536_2w/baseline/data.npz, results/local/2026-11-11_23-36-04_2048x1536_2w/baseline/meta.json
+--- sleep ---
+Sleep: linia 1, czas 2.007680 s
+variant=sleep workers=2 wall_time=4.480801 s
+Zapisano: results/local/2026-11-11_23-36-04_2048x1536_2w/sleep/data.npz, results/local/2026-11-11_23-36-04_2048x1536_2w/sleep/meta.json
+--- analyze ---
+Wykresy w results/local/2026-11-11_23-36-04_2048x1536_2w/baseline
+Wykresy w results/local/2026-11-11_23-36-04_2048x1536_2w/sleep
+RUN_DIR=results/local/2026-11-11_23-36-04_2048x1536_2w
+=== Done ===

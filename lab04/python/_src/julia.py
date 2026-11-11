@@ -5,7 +5,6 @@ from __future__ import annotations
 import argparse
 import json
 import socket
-import sys
 import time
 from datetime import datetime, timezone
 from itertools import repeat
@@ -72,6 +71,7 @@ def max_worker_time_from_dir(baseline_dir: Path, factor: float = 1.0) -> float:
         return 0.0
     return max(acc.values()) * factor
 
+
 def parse_args():
     p = argparse.ArgumentParser(description="Julia set — MPIPoolExecutor")
     p.add_argument("--width", type=int, default=1280)
@@ -93,6 +93,12 @@ def parse_args():
     )
     p.add_argument("--sleep-factor", type=float, default=1.0)
     p.add_argument("--chunksize", type=int, default=1)
+    p.add_argument(
+        "--platform",
+        choices=("local", "grid"),
+        default="local",
+        help="źródło pomiaru (zapis w meta.json)",
+    )
     p.add_argument(
         "--quiet",
         action=argparse.BooleanOptionalAction,
@@ -159,6 +165,7 @@ def main():
     )
 
     meta = {
+        "platform": args.platform,
         "variant": args.variant,
         "width": w,
         "height": h,

@@ -1,0 +1,14 @@
+{
+  "platform": "local",
+  "variant": "baseline",
+  "width": 320,
+  "height": 240,
+  "workers": 6,
+  "mpi_size": 7,
+  "wall_time": 0.21732822499999993,
+  "chunksize": 1,
+  "sleep_line": null,
+  "sleep_time": null,
+  "timestamp_utc": "2026-11-11T22:37:59.780116+00:00",
+  "hostname": "Stacjonarny"
+}

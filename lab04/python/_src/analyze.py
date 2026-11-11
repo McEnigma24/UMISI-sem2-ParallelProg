@@ -294,7 +294,7 @@ def main():
     parser.add_argument(
         "run_dir",
         type=Path,
-        help="katalog z data.npz i meta.json (np. results/runs/.../baseline)",
+        help="katalog z data.npz i meta.json (np. results/local/.../baseline)",
     )
     args = parser.parse_args()
     if not (args.run_dir / "data.npz").is_file():

@@ -25,12 +25,13 @@ else
     }
 fi
 
-RUN_DIR="results/runs/$(date +%Y-%m-%d_%H-%M-%S)_${WIDTH}x${HEIGHT}_${WORKERS}w"
-mkdir -p "$RUN_DIR/baseline" "$RUN_DIR/sleep" results/runs
+RESULTS_ROOT="results/${MODE}"
+RUN_DIR="${RESULTS_ROOT}/$(date +%Y-%m-%d_%H-%M-%S)_${WIDTH}x${HEIGHT}_${WORKERS}w"
+mkdir -p "$RUN_DIR/baseline" "$RUN_DIR/sleep" "$RESULTS_ROOT"
 exec > >(tee "$RUN_DIR/log.txt") 2>&1
 
 echo "=== Pipeline Julia ==="
-echo "mode=$MODE workers=$WORKERS NP=$NP ${WIDTH}x${HEIGHT}"
+echo "mode=$MODE results=$RESULTS_ROOT workers=$WORKERS NP=$NP ${WIDTH}x${HEIGHT}"
 echo "RUN_DIR=$RUN_DIR"
 
 echo "--- baseline ---"
@@ -38,7 +39,8 @@ launch_mpi \
     --width "$WIDTH" \
     --height "$HEIGHT" \
     --out-dir "$RUN_DIR/baseline" \
-    --variant baseline
+    --variant baseline \
+    --platform "$MODE"
 
 export JULIA_SLEEP_LINE=1
 echo "--- sleep ---"
@@ -49,7 +51,8 @@ launch_mpi \
     --variant sleep \
     --sleep-line 1 \
     --sleep-from "$RUN_DIR/baseline" \
-    --sleep-factor 1.0
+    --sleep-factor 1.0 \
+    --platform "$MODE"
 
 echo "--- analyze ---"
 uv run python _src/analyze.py "$RUN_DIR/baseline"

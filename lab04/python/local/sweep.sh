@@ -13,6 +13,9 @@ SIZES=(
     1600x1200
     1920x1440
     2560x1920
+    3840x1920   # szerszy (ta sama H)
+    2560x3840   # dłuższy (ta sama W)
+    2048x1536   # mniej Mpx, 4:3
 )
 
 for n in "${WORKERS[@]}"; do
@@ -23,3 +26,5 @@ for n in "${WORKERS[@]}"; do
         bash scripts/pipeline.sh local "$WIDTH" "$HEIGHT" "$n"
     done
 done
+
+uv run python _src/compare.py

@@ -1,0 +1,41 @@
+{
+  "platform": "local",
+  "variant": "baseline",
+  "width": 1600,
+  "height": 1200,
+  "workers": 2,
+  "mpi_size": 3,
+  "wall_time": 2.239989127,
+  "chunksize": 1,
+  "sleep_line": null,
+  "sleep_time": null,
+  "timestamp_utc": "2026-11-11T22:34:31.866927+00:00",
+  "hostname": "Stacjonarny",
+  "B": 0.2585487906588824,
+  "C": 0.48330550918196996,
+  "B_norm": -0.48290241868223516,
+  "C_norm": -0.03338898163606008,
+  "num_segments": 890,
+  "n_workers": 2,
+  "n_lines": 1200,
+  "time_min": 0.0004901840002276003,
+  "time_max": 0.0058689980032795575,
+  "time_diff": 0.005378814003051957,
+  "time_min_line": 1187,
+  "time_max_line": 797,
+  "time_median": 0.002075366499411757,
+  "lines_per_worker": [
+    600,
+    600
+  ],
+  "time_per_worker": [
+    1.2299520609776664,
+    1.2396789089834783
+  ],
+  "worker_ranks": [
+    1,
+    2
+  ],
+  "max_worker_busy": 1.2396789089834783,
+  "parallel_overhead": 1.0003102180165215
+}
