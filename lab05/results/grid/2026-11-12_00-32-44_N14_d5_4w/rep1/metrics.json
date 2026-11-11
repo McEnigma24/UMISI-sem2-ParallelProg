@@ -1,0 +1,37 @@
+{
+  "platform": "grid",
+  "n": 14,
+  "depth": 5,
+  "seed": 42,
+  "workers": 4,
+  "mpi_size": 5,
+  "n_tasks": 17160,
+  "wall_time": 339.920526157,
+  "chunksize": 1,
+  "best_cost": 6.03568041808726,
+  "optimal_known": 6.035680418087261,
+  "correct": true,
+  "timestamp_utc": "2026-11-11T23:38:25.162922+00:00",
+  "hostname": "ac0460",
+  "tasks_per_worker": [
+    4295,
+    4391,
+    4287,
+    4187
+  ],
+  "time_per_worker": [
+    330.57117460807785,
+    330.3926791138947,
+    330.66784796724096,
+    330.6275970530696
+  ],
+  "total_nodes": 309188496,
+  "worker_ranks": [
+    1,
+    2,
+    3,
+    4
+  ],
+  "max_worker_busy": 330.66784796724096,
+  "parallel_overhead": 9.252678189759024
+}

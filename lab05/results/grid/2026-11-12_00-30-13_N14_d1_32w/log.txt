@@ -1,0 +1,13 @@
+=== Pipeline TSP B&B ===
+mode=grid N=14 depth=1 workers=32 NP=33 repeats=1 seed=42
+RUN_DIR=results/grid/2026-11-12_00-30-13_N14_d1_32w
+--- rep 1/1 ---
+   Building test @ file:///net/afscra/people/plgwmackowiak/UMISI-sem2-ParallelProg/lab05
+      Built test @ file:///net/afscra/people/plgwmackowiak/UMISI-sem2-ParallelProg/lab05
+Installed 15 packages in 1.13s
+N=14 d=1 workers=32 wall_time=2.457269 s best=6.035680 opt=6.035680 correct=True
+Zapisano: results/grid/2026-11-12_00-30-13_N14_d1_32w/rep1/data.npz, results/grid/2026-11-12_00-30-13_N14_d1_32w/rep1/meta.json
+--- analyze rep 1 ---
+Wykresy w results/grid/2026-11-12_00-30-13_N14_d1_32w/rep1
+RUN_DIR=results/grid/2026-11-12_00-30-13_N14_d1_32w
+=== Done ===

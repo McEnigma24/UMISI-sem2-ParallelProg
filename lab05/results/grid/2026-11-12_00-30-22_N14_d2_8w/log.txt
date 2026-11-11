@@ -1,0 +1,10 @@
+=== Pipeline TSP B&B ===
+mode=grid N=14 depth=2 workers=8 NP=9 repeats=1 seed=42
+RUN_DIR=results/grid/2026-11-12_00-30-22_N14_d2_8w
+--- rep 1/1 ---
+N=14 d=2 workers=8 wall_time=2.913238 s best=6.035680 opt=6.035680 correct=True
+Zapisano: results/grid/2026-11-12_00-30-22_N14_d2_8w/rep1/data.npz, results/grid/2026-11-12_00-30-22_N14_d2_8w/rep1/meta.json
+--- analyze rep 1 ---
+Wykresy w results/grid/2026-11-12_00-30-22_N14_d2_8w/rep1
+RUN_DIR=results/grid/2026-11-12_00-30-22_N14_d2_8w
+=== Done ===

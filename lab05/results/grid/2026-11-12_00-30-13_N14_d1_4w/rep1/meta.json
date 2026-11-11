@@ -1,0 +1,16 @@
+{
+  "platform": "grid",
+  "n": 14,
+  "depth": 1,
+  "seed": 42,
+  "workers": 4,
+  "mpi_size": 5,
+  "n_tasks": 1,
+  "wall_time": 2.478745805,
+  "chunksize": 1,
+  "best_cost": 6.03568041808726,
+  "optimal_known": 6.035680418087261,
+  "correct": true,
+  "timestamp_utc": "2026-11-11T23:30:18.467042+00:00",
+  "hostname": "ac0460"
+}
