@@ -1,0 +1,19 @@
+=== Pipeline Julia ===
+mode=grid results=results/grid workers=48 NP=49 320x240
+RUN_DIR=results/grid/2026-11-11_23-48-06_320x240_48w
+--- baseline ---
+variant=baseline workers=48 wall_time=0.357103 s
+Zapisano: results/grid/2026-11-11_23-48-06_320x240_48w/baseline/data.npz, results/grid/2026-11-11_23-48-06_320x240_48w/baseline/meta.json
+--- sleep ---
+Sleep: linia 1, czas 0.010830 s
+variant=sleep workers=48 wall_time=0.171010 s
+Zapisano: results/grid/2026-11-11_23-48-06_320x240_48w/sleep/data.npz, results/grid/2026-11-11_23-48-06_320x240_48w/sleep/meta.json
+--- analyze ---
+/net/afscra/people/plgwmackowiak/UMISI-sem2-ParallelProg/lab04/python/_src/analyze.py:182: UserWarning: Tight layout not applied. The bottom and top margins cannot be made large enough to accommodate all Axes decorations.
+  fig.tight_layout()
+Wykresy w results/grid/2026-11-11_23-48-06_320x240_48w/baseline
+/net/afscra/people/plgwmackowiak/UMISI-sem2-ParallelProg/lab04/python/_src/analyze.py:182: UserWarning: Tight layout not applied. The bottom and top margins cannot be made large enough to accommodate all Axes decorations.
+  fig.tight_layout()
+Wykresy w results/grid/2026-11-11_23-48-06_320x240_48w/sleep
+RUN_DIR=results/grid/2026-11-11_23-48-06_320x240_48w
+=== Done ===

@@ -1,0 +1,24 @@
+=== Pipeline Julia ===
+mode=grid results=results/grid workers=32 NP=33 9600x4800
+RUN_DIR=results/grid/2026-11-11_23-48-03_9600x4800_32w
+--- baseline ---
+Using CPython 3.14.8
+Creating virtual environment at: .venv
+Using CPython 3.14.8
+Creating virtual environment at: .venv
+error: Failed to query Python interpreter
+  cause: failed to canonicalize path `/net/afscra/people/plgwmackowiak/UMISI-sem2-ParallelProg/lab04/python/.venv/bin/python`: No such file or directory (os error 2)
+Using CPython 3.14.8
+--------------------------------------------------------------------------
+Primary job  terminated normally, but 1 process returned
+a non-zero exit code. Per user-direction, the job has been aborted.
+--------------------------------------------------------------------------
+error: failed to remove directory `/net/afscra/people/plgwmackowiak/UMISI-sem2-ParallelProg/lab04/python/.venv`: Directory not empty (os error 39)
+error: failed to remove directory `/net/afscra/people/plgwmackowiak/UMISI-sem2-ParallelProg/lab04/python/.venv/lib`: Stale file handle (os error 116)
+--------------------------------------------------------------------------
+mpirun detected that one or more processes exited with non-zero status, thus causing
+the job to be terminated. The first process to do so was:
+
+  Process name: [[11860,1],24]
+  Exit code:    2
+--------------------------------------------------------------------------

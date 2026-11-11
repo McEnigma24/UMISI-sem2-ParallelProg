@@ -1,0 +1,14 @@
+{
+  "platform": "grid",
+  "variant": "sleep",
+  "width": 1920,
+  "height": 1440,
+  "workers": 4,
+  "mpi_size": 5,
+  "wall_time": 2.998066881,
+  "chunksize": 1,
+  "sleep_line": 1,
+  "sleep_time": 1.8187792715616524,
+  "timestamp_utc": "2026-11-11T22:48:35.572879+00:00",
+  "hostname": "ac0245"
+}

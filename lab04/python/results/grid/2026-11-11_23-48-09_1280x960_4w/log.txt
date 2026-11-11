@@ -1,0 +1,15 @@
+=== Pipeline Julia ===
+mode=grid results=results/grid workers=4 NP=5 1280x960
+RUN_DIR=results/grid/2026-11-11_23-48-09_1280x960_4w
+--- baseline ---
+variant=baseline workers=4 wall_time=1.273151 s
+Zapisano: results/grid/2026-11-11_23-48-09_1280x960_4w/baseline/data.npz, results/grid/2026-11-11_23-48-09_1280x960_4w/baseline/meta.json
+--- sleep ---
+Sleep: linia 1, czas 0.803989 s
+variant=sleep workers=4 wall_time=1.464898 s
+Zapisano: results/grid/2026-11-11_23-48-09_1280x960_4w/sleep/data.npz, results/grid/2026-11-11_23-48-09_1280x960_4w/sleep/meta.json
+--- analyze ---
+Wykresy w results/grid/2026-11-11_23-48-09_1280x960_4w/baseline
+Wykresy w results/grid/2026-11-11_23-48-09_1280x960_4w/sleep
+RUN_DIR=results/grid/2026-11-11_23-48-09_1280x960_4w
+=== Done ===

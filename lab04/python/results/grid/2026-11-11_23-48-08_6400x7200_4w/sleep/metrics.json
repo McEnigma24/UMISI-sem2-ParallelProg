@@ -1,0 +1,47 @@
+{
+  "platform": "grid",
+  "variant": "sleep",
+  "width": 6400,
+  "height": 7200,
+  "workers": 4,
+  "mpi_size": 5,
+  "wall_time": 40.684914406,
+  "chunksize": 1,
+  "sleep_line": 1,
+  "sleep_time": 29.786404389422387,
+  "timestamp_utc": "2026-11-11T22:49:36.622566+00:00",
+  "hostname": "ac0255",
+  "B": 0.04333935268787332,
+  "C": 0.3226792662590328,
+  "B_norm": -0.27554752974950225,
+  "C_norm": 0.09690568834537709,
+  "num_segments": 6888,
+  "n_workers": 4,
+  "n_lines": 7200,
+  "time_min": 0.0034519010223448277,
+  "time_max": 29.790118847973645,
+  "time_diff": 29.7866669469513,
+  "time_min_line": 8,
+  "time_max_line": 1,
+  "time_median": 0.01690126769244671,
+  "lines_per_worker": [
+    2181,
+    657,
+    2182,
+    2180
+  ],
+  "time_per_worker": [
+    36.577537898905575,
+    39.45453785965219,
+    35.91701385285705,
+    36.61123985052109
+  ],
+  "worker_ranks": [
+    1,
+    2,
+    3,
+    4
+  ],
+  "max_worker_busy": 39.45453785965219,
+  "parallel_overhead": 1.2303765463478058
+}
