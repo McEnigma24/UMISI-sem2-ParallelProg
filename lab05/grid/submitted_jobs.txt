@@ -1,0 +1,7 @@
+# 2026-11-12T00:27:09+01:00 grid TSP sweep
+21716083 N=14 workers=4
+21716084 N=14 workers=8
+21716085 N=14 workers=16
+21716086 N=14 workers=24
+21716087 N=14 workers=32
+21716088 N=14 workers=48
