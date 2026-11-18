@@ -1,0 +1,214 @@
+cmake_minimum_required(VERSION 4.2)
+project(MyProject LANGUAGES CXX CUDA)
+
+set(CMAKE_CXX_STANDARD 26)
+set(CMAKE_CUDA_STANDARD 20)
+# set(CMAKE_CXX_COMPILER g++)
+# set(CMAKE_CXX_COMPILER clang++)
+# if(NOT CMAKE_BUILD_TYPE)
+#     set(CMAKE_BUILD_TYPE Release)
+# endif()
+
+set(CMAKE_CUDA_ARCHITECTURES 86)
+# set(CMAKE_CUDA_ARCHITECTURES native)
+# set(CMAKE_CUDA_SEPARABLE_COMPILATION ON)
+
+set(CONST_TARGET_NAME "TEMPLATE")
+
+
+
+# SOURCES #
+
+include_directories(_inc)
+aux_source_directory(_src PROJECT_SOURCES)
+
+aux_source_directory(_src PROJECT_TEST_SOURCES)
+list(FILTER PROJECT_TEST_SOURCES EXCLUDE REGEX ".*main\\.cu")
+aux_source_directory(_test PROJECT_TEST_SOURCES)
+
+aux_source_directory(_src PROJECT_BENCH_SOURCES)
+list(FILTER PROJECT_BENCH_SOURCES EXCLUDE REGEX ".*main\\.cu")
+aux_source_directory(_bench PROJECT_BENCH_SOURCES)
+
+
+
+# MACRO FOR LOGS # - dont show the whole realpath to file
+
+string(LENGTH "${CMAKE_SOURCE_DIR}/" SOURCE_PATH_SIZE)
+add_definitions(-DSOURCE_PATH_SIZE=${SOURCE_PATH_SIZE})
+
+
+
+# COMPILER FLAGS #
+
+# https://docs.oracle.com/cd/E19957-01/806-3572/Rev.html
+# https://caiorss.github.io/C-Cpp-Notes/compiler-flags-options.html
+# https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wfatal-errors
+
+# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall -Wextra")                                                             # to see everything
+# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wfatal-errors -Werror=uninitialized -Werror=init-self -Werror=reorder")    # for normal coding
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -w")                                                                       # for release
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=x86-64-v3")                                                             # specific
+# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native")
+# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp")
+# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mavx2")
+#                                                                  https://hjlebbink.github.io/x86doc/
+#                                                                  - look for *.o file
+# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -S") # ASSEMBLY
+# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -S -fverbose-asm") # ASSEMBLY with comments
+# set(COMPILE_FLAGS "${COMPILE_FLAGS} -m64")
+# set(LINK_FLAGS "${LINK_FLAGS} -m64")
+# set_target_properties(${TARGET_NAME} PROPERTIES ${COMPILE_FLAGS} ${LINK_FLAGS}) # previousley before target_link_libraries()
+
+# set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} -G -lineinfo")                                                             # debug / profilowanie
+# set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} --ptxas-options=-v")                                                       # rejestry w shared memory
+set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} -O3 -w")
+set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} -Xcompiler=-march=x86-64-v3")
+
+
+
+# PACKAGES - present in the system (openmpi-bin) #
+
+find_package(CUDAToolkit REQUIRED)
+
+
+
+# EXTERNAL LIBS #
+
+# 1 - core #
+block(PROPAGATE ALL_LIBRARIES)
+    include(FetchContent)
+    FetchContent_Declare(
+        core
+        GIT_REPOSITORY https://github.com/McEnigma24/CORE_lib.git
+        GIT_TAG        main # lub inny tag/commit
+        GIT_SHALLOW    TRUE
+        GIT_SUBMODULES_RECURSE TRUE
+        UPDATE_DISCONNECTED ON
+    )
+    set(BUILD_LIBRARY ON)
+    set(CTEST_ACTIVE OFF)
+    set(BENCH_ACTIVE OFF)
+    FetchContent_MakeAvailable(core)
+
+    set(ALL_LIBRARIES ${ALL_LIBRARIES} core CUDA::cudart)
+    include_directories(${core_SOURCE_DIR}/_inc)
+endblock()
+
+# EXAMPLE - ssd1306 #
+block(PROPAGATE ALL_LIBRARIES)
+    # include(FetchContent)
+    # FetchContent_Declare(
+    #     ssd1306
+    #     GIT_REPOSITORY https://github.com/armlabs/ssd1306_linux.git
+    #     GIT_TAG        master # lub inny tag/commit
+    # )
+    # FetchContent_MakeAvailable(ssd1306) # tutaj nie dzial, a normanie zbudowalby projekt, ale tutaj nie zrobi bo nie ma pliku CMakeLists.txt
+    # include_directories(${ssd1306_SOURCE_DIR})
+    # # Dodaj pliki źródłowe ręcznie
+    # file(GLOB SSD1306_SOURCES
+    #     ${ssd1306_SOURCE_DIR}/*.c
+    # )
+    # add_library(ssd1306 STATIC ${SSD1306_SOURCES})
+    # target_include_directories(ssd1306 PUBLIC ${ssd1306_SOURCE_DIR})
+    # set(ALL_LIBRARIES ${ALL_LIBRARIES} ssd1306) # dodajemy do glownego EXE
+endblock()
+
+
+
+# TARGET FLAGS #
+
+if(PROJECT_IS_TOP_LEVEL)
+    option(BUILD_LIBRARY    "Build library instead of executable"   OFF) # default value - could be overwritten by provided FLAG
+    option(CTEST_ACTIVE     "Testing is active"                     OFF) # default value - could be overwritten by provided FLAG
+    option(BENCH_ACTIVE     "Benchmarking is active"                OFF) # default value - could be overwritten by provided FLAG
+else()
+
+    macro(default_if_not_passed var value)
+        if(NOT DEFINED ${var} OR DEFINED CACHE{${var}})
+            set(${var} ${value})
+        endif()
+    endmacro()
+
+    # backup if parent didn't set these flags AND directory is a sub-project
+    default_if_not_passed(BUILD_LIBRARY ON)
+    default_if_not_passed(CTEST_ACTIVE  OFF)
+    default_if_not_passed(BENCH_ACTIVE  OFF)
+endif()
+
+
+
+# TARGETS #
+
+if(BUILD_LIBRARY)
+    message(WARNING "Building library")
+    set(TARGET_NAME "${CONST_TARGET_NAME}")
+
+    add_library(${TARGET_NAME} SHARED ${PROJECT_SOURCES})
+    target_compile_definitions(${TARGET_NAME} PRIVATE LINUX)                    #define macros
+    target_link_libraries(${TARGET_NAME} PUBLIC ${ALL_LIBRARIES})
+    set_target_properties(${TARGET_NAME} PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
+else()
+    message(WARNING "Building exe")
+    set(TARGET_NAME "${CONST_TARGET_NAME}.exe")
+
+    add_executable(${TARGET_NAME} ${PROJECT_SOURCES})
+    target_compile_definitions(${TARGET_NAME} PRIVATE LINUX BUILD_EXECUTABLE)   #define macros
+    target_link_libraries(${TARGET_NAME} PUBLIC ${ALL_LIBRARIES})
+    set_target_properties(${TARGET_NAME} PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
+endif()
+
+
+
+# TESTS #
+
+if(CTEST_ACTIVE)
+    message(WARNING "TESTING...")
+    # Włączenie testów
+    enable_testing()
+
+    include(FetchContent)
+    FetchContent_Declare(
+        googletest
+        GIT_REPOSITORY https://github.com/google/googletest.git
+        GIT_TAG        v1.14.0  # możesz zmienić tag na nowszy gdy będzie dostępny
+        GIT_SHALLOW    TRUE
+        UPDATE_DISCONNECTED ON
+    )
+    # For Windows: Prevent overriding the parent project's compiler/linker settings
+    set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+    FetchContent_MakeAvailable(googletest)
+
+    # Dodanie testów
+    set(TEST_EXE_NAME "test.texe")
+    add_executable(${TEST_EXE_NAME} ${PROJECT_TEST_SOURCES})
+    target_link_libraries(${TEST_EXE_NAME} PRIVATE gtest_main ${ALL_LIBRARIES})
+    set_target_properties(${TEST_EXE_NAME} PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
+
+    # Rejestracja testów
+    include(GoogleTest)
+    gtest_discover_tests(${TEST_EXE_NAME})
+endif()
+
+if(BENCH_ACTIVE)
+    message(WARNING "BENCHMARKING...")
+
+    include(FetchContent)
+    FetchContent_Declare(
+        benchmark
+        GIT_REPOSITORY https://github.com/google/benchmark.git
+        GIT_TAG        v1.9.5
+        GIT_SHALLOW    TRUE
+        UPDATE_DISCONNECTED ON
+    )
+    # bez tego benchmark buduje własne testy i zaciąga do nich googletesta
+    set(BENCHMARK_ENABLE_TESTING OFF CACHE BOOL "" FORCE)
+    set(BENCHMARK_ENABLE_WERROR  OFF CACHE BOOL "" FORCE)
+    FetchContent_MakeAvailable(benchmark)
+
+    set(BENCH_EXE_NAME "bench.bexe")
+    add_executable(${BENCH_EXE_NAME} ${PROJECT_BENCH_SOURCES})
+    target_link_libraries(${BENCH_EXE_NAME} PRIVATE benchmark::benchmark ${ALL_LIBRARIES})
+    set_target_properties(${BENCH_EXE_NAME} PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
+endif()

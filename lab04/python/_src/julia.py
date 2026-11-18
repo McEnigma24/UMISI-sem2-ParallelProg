@@ -71,7 +71,6 @@ def max_worker_time_from_dir(baseline_dir: Path, factor: float = 1.0) -> float:
         return 0.0
     return max(acc.values()) * factor
 
-
 def parse_args():
     p = argparse.ArgumentParser(description="Julia set — MPIPoolExecutor")
     p.add_argument("--width", type=int, default=1280)
@@ -106,7 +105,6 @@ def parse_args():
         help="domyślnie bez printów linii (--no-quiet aby włączyć)",
     )
     return p.parse_args()
-
 
 def main():
     comm = MPI.COMM_WORLD

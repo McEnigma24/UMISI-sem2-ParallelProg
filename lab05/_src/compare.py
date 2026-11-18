@@ -105,13 +105,20 @@ def aggregate(records: list[dict]) -> dict[tuple, dict]:
     return out
 
 
-def serial_reference(agg: dict, platform: str, n: int, d: int) -> float | None:
+def serial_reference(
+    agg: dict, platform: str, n: int, d: int
+) -> tuple[float | None, int, str]:
+    """T(1) i źródło: workers=1 na tej platformie, potem workers=1 gdzie indziej, na końcu max czas (brak p=1)."""
     key1 = (platform, n, d, 1)
     if key1 in agg:
-        return agg[key1]["mean"]
-    # fallback: minimalny czas przy 1 workerze z dowolnego wpisu
-    times = [v["mean"] for k, v in agg.items() if k[0] == platform and k[1] == n and k[2] == d and k[3] == 1]
-    return times[0] if times else None
+        return agg[key1]["mean"], 1, platform
+    for plat in ("local", "grid"):
+        if plat == platform:
+            continue
+        key = (plat, n, d, 1)
+        if key in agg:
+            return agg[key]["mean"], 1, plat
+    return None, 0, ""
 
 
 def karp_flatt(speedup: float, p: int) -> float:
@@ -127,8 +134,8 @@ def metric_tables(
     for (plat, n_i, d, p), stats in sorted(agg.items()):
         if plat != platform or n_i != n:
             continue
-        t1 = serial_reference(agg, platform, n, d)
-        if t1 is None or t1 <= 0:
+        t1, p_ref, ref_source = serial_reference(agg, platform, n, d)
+        if t1 is None or t1 <= 0 or p_ref != 1:
             continue
         tp = stats["mean"]
         s = t1 / tp
@@ -142,6 +149,8 @@ def metric_tables(
                 "workers": p,
                 "wall_mean": tp,
                 "t_serial_ref": t1,
+                "serial_ref_workers": p_ref,
+                "serial_ref_source": ref_source,
                 "speedup": s,
                 "efficiency": e,
                 "serial_fraction": f,
@@ -162,6 +171,26 @@ def plot_metric_vs_p(
     for r in rows:
         by_d[r["depth"]].append(r)
     fig, ax = plt.subplots(figsize=(9, 5))
+    workers = sorted({int(r["workers"]) for r in rows})
+    if metric == "speedup" and workers:
+        p_ideal = np.asarray(workers, dtype=np.float64)
+        ax.plot(
+            p_ideal,
+            p_ideal,
+            "k--",
+            linewidth=1.8,
+            label="idealne S = p",
+            zorder=1,
+        )
+    if metric == "efficiency" and workers:
+        ax.axhline(
+            1.0,
+            color="k",
+            linestyle="--",
+            linewidth=1.8,
+            label="idealne E = 1",
+            zorder=1,
+        )
     for d in sorted(by_d):
         pts = sorted(by_d[d], key=lambda x: x["workers"])
         xs = [p["workers"] for p in pts]
@@ -190,6 +219,18 @@ def plot_metric_vs_d(
             continue
         by_p[r["workers"]].append(r)
     fig, ax = plt.subplots(figsize=(9, 5))
+    if metric == "efficiency":
+        ax.axhline(
+            1.0,
+            color="k",
+            linestyle="--",
+            linewidth=1.8,
+            label="idealne E = 1",
+            zorder=1,
+        )
+    if not by_p:
+        plt.close(fig)
+        return
     for p in sorted(by_p):
         pts = sorted(by_p[p], key=lambda x: x["depth"])
         xs = [t["depth"] for t in pts]
@@ -198,6 +239,50 @@ def plot_metric_vs_d(
     ax.set_xlabel("głębokość d (prefiks)")
     ax.set_ylabel(ylabel)
     ax.set_title(title)
+    ax.grid(True, alpha=0.3)
+    ax.legend()
+    fig.tight_layout()
+    fig.savefig(out_path, dpi=150)
+    plt.close(fig)
+
+
+def plot_wall_vs_p(agg: dict, platform: str, n: int, out_path: Path) -> None:
+    by_d: dict[int, list[tuple[int, float]]] = defaultdict(list)
+    for (plat, n_i, d, p), stats in agg.items():
+        if plat != platform or n_i != n:
+            continue
+        by_d[d].append((p, stats["mean"]))
+    if not by_d:
+        return
+    fig, ax = plt.subplots(figsize=(9, 5))
+    for d in sorted(by_d):
+        pts = sorted(by_d[d], key=lambda x: x[0])
+        ax.plot([x[0] for x in pts], [x[1] for x in pts], "o-", label=f"d={d}")
+    ax.set_xlabel("liczba workerów")
+    ax.set_ylabel("wall_time [s]")
+    ax.set_title(f"[{platform}] wall_time vs p (N={n})")
+    ax.grid(True, alpha=0.3)
+    ax.legend()
+    fig.tight_layout()
+    fig.savefig(out_path, dpi=150)
+    plt.close(fig)
+
+
+def plot_wall_vs_d(agg: dict, platform: str, n: int, out_path: Path) -> None:
+    by_p: dict[int, list[tuple[int, float]]] = defaultdict(list)
+    for (plat, n_i, d, p), stats in agg.items():
+        if plat != platform or n_i != n:
+            continue
+        by_p[p].append((d, stats["mean"]))
+    if not by_p:
+        return
+    fig, ax = plt.subplots(figsize=(9, 5))
+    for p in sorted(by_p):
+        pts = sorted(by_p[p], key=lambda x: x[0])
+        ax.plot([x[0] for x in pts], [x[1] for x in pts], "o-", label=f"p={p}")
+    ax.set_xlabel("głębokość d")
+    ax.set_ylabel("wall_time [s]")
+    ax.set_title(f"[{platform}] wall_time vs d (N={n})")
     ax.grid(True, alpha=0.3)
     ax.legend()
     fig.tight_layout()
@@ -250,7 +335,12 @@ def process_platform(agg: dict, platform: str, compare_dir: Path) -> None:
     for n in ns:
         rows = metric_tables(agg, platform, n)
         all_rows.extend(rows)
+        plot_wall_vs_p(agg, platform, n, plat_dir / f"wall_time_vs_p_N{n}.png")
+        plot_wall_vs_d(agg, platform, n, plat_dir / f"wall_time_vs_d_N{n}.png")
         if not rows:
+            print(
+                f"[compare] {platform} N={n}: brak S,E,f (dodaj run z 1 workerem dla T(1))"
+            )
             continue
         plot_metric_vs_p(
             rows,

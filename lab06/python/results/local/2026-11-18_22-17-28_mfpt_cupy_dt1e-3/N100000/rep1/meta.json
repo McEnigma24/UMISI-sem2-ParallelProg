@@ -1,0 +1,19 @@
+{
+  "problem": "mfpt",
+  "backend": "cupy",
+  "n": 100000,
+  "rep": 1,
+  "seed": 100059,
+  "t_kernel_sim": 0.0058122239112854005,
+  "t_kernel_post": 8.499199897050858e-05,
+  "t_d2h": 0.000411296010017395,
+  "t_alloc": 8.998904377222061e-08,
+  "t_total": 0.007135431995266117,
+  "n_trajectories": 100000,
+  "n_steps_total": null,
+  "mean_exit_time": 1.0386170364891738,
+  "std_exit_time": 0.8504794836044312,
+  "n_exited": 100000,
+  "n_censored": 0,
+  "mean_error": 0.038617036489173806
+}

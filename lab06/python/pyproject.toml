@@ -1,0 +1,18 @@
+[project]
+name = "langevin-gpu"
+version = "0.1.0"
+description = "Langevin SDE on GPU (CuPy + PyCUDA)"
+readme = "README.md"
+authors = [
+    { name = "McEnigma24", email = "wojciech.mackowiak24@gmail.com" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "cupy-cuda12x[ctk]>=13.0.0",
+    "matplotlib>=3.11.2",
+    "numpy>=2.5.4",
+    "pycuda>=2025.1",
+]
+
+[tool.uv]
+package = false

@@ -1,0 +1,12 @@
+=== Pipeline Langevin GPU ===
+problem=mfpt backend=cpu dt=1e-3 n_list=1e3 1e4 1e5 3e5 1e6 repeats=1 seed=42
+RUN_DIR=results/local/2026-11-18_22-17-49_mfpt_cpu_dt1e-3
+n=1000 rep=1 wall=0.3057s sim=0.2999s mean=1.0223
+n=10000 rep=1 wall=3.1356s sim=3.1353s mean=1.0299
+n=100000 rep=1 wall=31.0605s sim=31.0592s mean=1.0371
+n=300000 rep=1 wall=91.6133s sim=91.6100s mean=1.0375
+n=1000000 rep=1 wall=311.3423s sim=311.3355s mean=1.0367
+Zapisano przebieg: results/local/2026-11-18_22-17-49_mfpt_cpu_dt1e-3
+Wykresy w results/local/2026-11-18_22-17-49_mfpt_cpu_dt1e-3
+RUN_DIR=results/local/2026-11-18_22-17-49_mfpt_cpu_dt1e-3
+=== Done ===

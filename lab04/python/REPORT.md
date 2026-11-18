@@ -40,5 +40,5 @@ Na największym progu rozmiaru (lokalnie ok. 2560×1920, na gridzie 6400×4800) 
 ## M — Mapping (mapowanie)
 
 - **Dynamiczny** model master–worker: `MPIPoolExecutor.map` — wolny worker pobiera kolejną linię.
-- **Uzasadnienie:** czas linii zależy od `k` — statyczny podział blokowy/cykliczny prowadziłby do nierównowagi (`B`, `C`, `B_norm`, `C_norm` w mini-raporcie).
+- **Uzasadnienie:** czas linii zależy od `k` — statyczny podział blokowy/cykliczny prowadziłby do nierównowagi. W mini-raporcie: `B` (= lag 1), `C` (= lag P), oraz **profil lag 1…2P** (`assignment_lag.png`, pola `lag_frac` / `lag_norm` w `metrics.json`) — porównanie z poziomem losowym `1/P`.
 - **Sleep na jednej linii:** symuluje długie zadanie — widać to na mapie przydziału i wykresie liczby linii na proces.

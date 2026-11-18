@@ -3,7 +3,7 @@ source "_common_" 2>/dev/null
 source "grid/common_submit.sh"
 
 N=14
-WORKERS=(4 8 16 24 32 48)
+WORKERS=(1 4 8 16 24 32 48)
 D_LIST="1 2 3 4 5"
 export TSP_SEED=42
 export TSP_REPEATS=1

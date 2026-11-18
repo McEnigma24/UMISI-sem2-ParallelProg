@@ -1,0 +1,7 @@
+* text=auto
+
+# Skrypty muszą mieć LF nawet po edycji z Windowsa - bash traktuje CR jako część
+# słowa, więc "fi\r" przestaje być słowem kluczowym i plik wywala się na składni.
+*.sh text eol=lf
+Dockerfile text eol=lf
+config text eol=lf
