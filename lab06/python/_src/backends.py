@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import struct
 import time
 from abc import ABC, abstractmethod
 from pathlib import Path
@@ -10,6 +11,7 @@ import numpy as np
 
 KERNEL_PATH = Path(__file__).resolve().parent / "kernels" / "langevin.cu"
 BLOCK = 256
+SIZEOF_UINT = struct.calcsize("I")  # sizeof(unsigned int), jak w histogram_kernel
 NVCC_INCLUDES = ("-I/usr/include", "-I/usr/lib/cuda/include")
 
 
@@ -132,7 +134,7 @@ class CupyBackend(LangevinBackend):
 
         xmin, xmax = -5.0 * np.sqrt(tau), 5.0 * np.sqrt(tau)
         hist = cp.zeros(bins, dtype=cp.uint32)
-        shmem = bins * 4
+        shmem = bins * SIZEOF_UINT
 
         ev2, ev3 = cp.cuda.Event(), cp.cuda.Event()
         ev2.record()
@@ -333,7 +335,7 @@ class PycudaBackend(LangevinBackend):
         times["t_kernel_sim"] = self._event_ms(ev0, ev1) / 1000.0
 
         xmin, xmax = -5.0 * np.sqrt(tau), 5.0 * np.sqrt(tau)
-        hist = cuda.mem_alloc(bins * 4)
+        hist = cuda.mem_alloc(bins * SIZEOF_UINT)
         cuda.memset_d32(hist, 0, bins)
 
         ev2, ev3 = cuda.Event(), cuda.Event()
@@ -347,7 +349,7 @@ class PycudaBackend(LangevinBackend):
             np.float32(xmax),
             block=(block, 1, 1),
             grid=(grid, 1),
-            shared=bins * 4,
+            shared=bins * SIZEOF_UINT,
         )
         ev3.record()
         ev3.synchronize()
