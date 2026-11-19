@@ -59,6 +59,17 @@ def load_records(results_root: Path) -> list[dict]:
             if mean_t and n_ex > 0:
                 n_steps_total = mean_t * n_ex / dt
         t_total = float(meta["t_total"])
+        t_post = float(meta.get("t_kernel_post", 0))
+        t_hist = meta.get("t_histogram")
+        t_sum = meta.get("t_sum_reduce")
+        if t_hist is None:
+            t_hist = t_post if problem == "density" else 0.0
+        else:
+            t_hist = float(t_hist)
+        if t_sum is None:
+            t_sum = t_post if problem == "mfpt" else 0.0
+        else:
+            t_sum = float(t_sum)
         throughput = None
         if n_steps_total is not None and t_total > 0:
             throughput = float(n_steps_total) / t_total
@@ -70,6 +81,9 @@ def load_records(results_root: Path) -> list[dict]:
                 "n": int(meta["n"]),
                 "t_total": t_total,
                 "t_kernel_sim": float(meta.get("t_kernel_sim", 0)),
+                "t_kernel_post": t_post,
+                "t_histogram": t_hist,
+                "t_sum_reduce": t_sum,
                 "error": float(err) if err is not None else None,
                 "throughput": throughput,
                 "dt": dt,
@@ -115,6 +129,43 @@ def plot_time_vs_n(rows: list[dict], problem: str, out_path: Path) -> None:
     ax.set_xlabel("N trajektorii")
     ax.set_ylabel("czas [s]")
     ax.set_title(f"Czas vs N — {problem}")
+    ax.legend(fontsize=8)
+    ax.grid(True, which="both", alpha=0.3)
+    fig.tight_layout()
+    fig.savefig(out_path, dpi=150)
+    plt.close(fig)
+
+
+def plot_sim_vs_post_kernel_vs_n(
+    rows: list[dict], problem: str, post_key: str, post_label: str, out_path: Path
+) -> None:
+    """Czas kernela symulacji vs post (histogram / sum_reduce)."""
+    fig, ax = plt.subplots(figsize=(8, 5))
+    for backend, color in [("cupy", "#1f77b4"), ("pycuda", "#ff7f0e"), ("cpu", "#2ca02c")]:
+        sub = [r for r in rows if r["problem"] == problem and r["backend"] == backend]
+        if not sub:
+            continue
+        agg_sim = aggregate_mean(sub, "t_kernel_sim")
+        agg_post = aggregate_mean(sub, post_key)
+        ns = sorted({k[2] for k in agg_sim})
+        ax.loglog(
+            ns,
+            [agg_sim[(problem, backend, n)]["mean"] for n in ns],
+            "o-",
+            color=color,
+            label=f"{backend} sim",
+        )
+        ax.loglog(
+            ns,
+            [agg_post[(problem, backend, n)]["mean"] for n in ns],
+            "s--",
+            color=color,
+            alpha=0.85,
+            label=f"{backend} {post_label}",
+        )
+    ax.set_xlabel("N trajektorii")
+    ax.set_ylabel("czas kernela [s]")
+    ax.set_title(f"Czas kerneli: sim vs {post_label} — {problem}")
     ax.legend(fontsize=8)
     ax.grid(True, which="both", alpha=0.3)
     fig.tight_layout()
@@ -295,6 +346,9 @@ def write_summary_csv(rows: list[dict], out_path: Path) -> None:
         "n",
         "t_total",
         "t_kernel_sim",
+        "t_kernel_post",
+        "t_histogram",
+        "t_sum_reduce",
         "throughput",
         "error",
         "mean_exit",
@@ -326,6 +380,12 @@ def main() -> None:
     for problem in ("density", "mfpt"):
         plot_time_vs_n(rows, problem, compare_dir / f"{problem}_time_vs_n.png")
         plot_throughput_vs_n(rows, problem, compare_dir / f"{problem}_throughput_vs_n.png")
+    plot_sim_vs_post_kernel_vs_n(
+        rows, "density", "t_histogram", "histogram", compare_dir / "density_histogram_time_vs_n.png"
+    )
+    plot_sim_vs_post_kernel_vs_n(
+        rows, "mfpt", "t_sum_reduce", "sum_reduce", compare_dir / "mfpt_sum_reduce_time_vs_n.png"
+    )
     plot_density_error_vs_n(rows, compare_dir / "density_error_vs_n.png")
     plot_mfpt_mean_vs_n(rows, compare_dir / "mfpt_error_vs_n.png")
 

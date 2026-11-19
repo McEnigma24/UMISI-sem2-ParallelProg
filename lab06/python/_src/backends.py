@@ -154,6 +154,8 @@ class CupyBackend(LangevinBackend):
         ev3.record()
         ev3.synchronize()
         times["t_kernel_post"] = self._event_ms(ev2, ev3) / 1000.0
+        times["t_histogram"] = times["t_kernel_post"]
+        times["t_sum_reduce"] = 0.0
 
         ev4, ev5 = cp.cuda.Event(), cp.cuda.Event()
         ev4.record()
@@ -231,6 +233,8 @@ class CupyBackend(LangevinBackend):
         ev3.record()
         ev3.synchronize()
         times["t_kernel_post"] = self._event_ms(ev2, ev3) / 1000.0
+        times["t_histogram"] = 0.0
+        times["t_sum_reduce"] = times["t_kernel_post"]
 
         ev4, ev5 = cp.cuda.Event(), cp.cuda.Event()
         ev4.record()
@@ -354,6 +358,8 @@ class PycudaBackend(LangevinBackend):
         ev3.record()
         ev3.synchronize()
         times["t_kernel_post"] = self._event_ms(ev2, ev3) / 1000.0
+        times["t_histogram"] = times["t_kernel_post"]
+        times["t_sum_reduce"] = 0.0
 
         ev4, ev5 = cuda.Event(), cuda.Event()
         ev4.record()
@@ -436,6 +442,8 @@ class PycudaBackend(LangevinBackend):
         ev3.record()
         ev3.synchronize()
         times["t_kernel_post"] = self._event_ms(ev2, ev3) / 1000.0
+        times["t_histogram"] = 0.0
+        times["t_sum_reduce"] = times["t_kernel_post"]
 
         ev4, ev5 = cuda.Event(), cuda.Event()
         ev4.record()
@@ -510,6 +518,8 @@ class NumpyBackend(LangevinBackend):
             "t_alloc": 0.0,
             "t_kernel_sim": t_sim,
             "t_kernel_post": t_post,
+            "t_histogram": t_post,
+            "t_sum_reduce": 0.0,
             "t_d2h": 0.0,
             "t_total": time.perf_counter() - wall0,
             "n_trajectories": n,
@@ -562,6 +572,8 @@ class NumpyBackend(LangevinBackend):
             "t_alloc": 0.0,
             "t_kernel_sim": t_sim,
             "t_kernel_post": 0.0,
+            "t_histogram": 0.0,
+            "t_sum_reduce": 0.0,
             "t_d2h": 0.0,
             "t_total": time.perf_counter() - wall0,
             "n_trajectories": n,

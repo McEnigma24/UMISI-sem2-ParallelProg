@@ -64,9 +64,22 @@ def plot_mfpt(rep_dir: Path, data: dict, meta: dict) -> None:
 
 
 def plot_timings(rep_dir: Path, meta: dict) -> None:
-    keys = ["t_alloc", "t_kernel_sim", "t_kernel_post", "t_d2h"]
-    vals = [float(meta.get(k, 0)) for k in keys]
-    labels = ["alloc", "sim", "post", "d2h"]
+    problem = meta.get("problem", "density")
+    t_post = float(meta.get("t_kernel_post", 0))
+    if problem == "mfpt":
+        t_post_named = float(meta.get("t_sum_reduce", t_post))
+        post_label = "sum_reduce"
+    else:
+        t_post_named = float(meta.get("t_histogram", t_post))
+        post_label = "histogram"
+    keys = ["t_alloc", "t_kernel_sim", None, "t_d2h"]
+    vals = [
+        float(meta.get("t_alloc", 0)),
+        float(meta.get("t_kernel_sim", 0)),
+        t_post_named,
+        float(meta.get("t_d2h", 0)),
+    ]
+    labels = ["alloc", "sim", post_label, "d2h"]
     other = max(0.0, float(meta.get("t_total", 0)) - sum(vals))
     vals.append(other)
     labels.append("other")
