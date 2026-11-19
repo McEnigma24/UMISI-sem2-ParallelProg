@@ -1,0 +1,21 @@
+{
+  "problem": "mfpt",
+  "backend": "pycuda",
+  "n": 1000,
+  "rep": 1,
+  "seed": 1059,
+  "t_alloc": 0.00039686899981461465,
+  "t_kernel_sim": 0.0012431360483169556,
+  "t_kernel_post": 2.969600073993206e-05,
+  "t_histogram": 0.0,
+  "t_sum_reduce": 2.969600073993206e-05,
+  "t_d2h": 0.00023734399676322938,
+  "t_total": 0.0022200679959496483,
+  "n_trajectories": 1000,
+  "n_steps_total": 1033305,
+  "mean_exit_time": 1.0333054062128066,
+  "std_exit_time": 0.8584187030792236,
+  "n_exited": 1000,
+  "n_censored": 0,
+  "mean_error": 0.03330540621280664
+}

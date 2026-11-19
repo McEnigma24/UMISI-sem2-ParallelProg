@@ -1,0 +1,34 @@
+=== Pipeline Langevin GPU ===
+problem=mfpt backend=numba dt=1e-3 n_list=1e3 1e4 1e5 3e5 1e6 3e6 1e7 3e7 1e8 repeats=1 seed=42
+RUN_DIR=results/local/2026-11-19_02-57-27_mfpt_numba_dt1e-3
+/home/womackow/CODE_SPACE/agh/sem2/UMISI-sem2-ParallelProg/lab06/python/.venv/lib/python3.13/site-packages/numba/cuda/dispatcher.py:540: NumbaPerformanceWarning: Grid size 1 will likely result in GPU under-utilization due to low occupancy.
+  warn(NumbaPerformanceWarning(msg))
+/home/womackow/CODE_SPACE/agh/sem2/UMISI-sem2-ParallelProg/lab06/python/.venv/lib/python3.13/site-packages/numba/cuda/dispatcher.py:540: NumbaPerformanceWarning: Grid size 1 will likely result in GPU under-utilization due to low occupancy.
+  warn(NumbaPerformanceWarning(msg))
+/home/womackow/CODE_SPACE/agh/sem2/UMISI-sem2-ParallelProg/lab06/python/.venv/lib/python3.13/site-packages/numba/cuda/dispatcher.py:540: NumbaPerformanceWarning: Grid size 1 will likely result in GPU under-utilization due to low occupancy.
+  warn(NumbaPerformanceWarning(msg))
+/home/womackow/CODE_SPACE/agh/sem2/UMISI-sem2-ParallelProg/lab06/python/.venv/lib/python3.13/site-packages/numba/cuda/dispatcher.py:540: NumbaPerformanceWarning: Grid size 1 will likely result in GPU under-utilization due to low occupancy.
+  warn(NumbaPerformanceWarning(msg))
+/home/womackow/CODE_SPACE/agh/sem2/UMISI-sem2-ParallelProg/lab06/python/.venv/lib/python3.13/site-packages/numba/cuda/dispatcher.py:540: NumbaPerformanceWarning: Grid size 4 will likely result in GPU under-utilization due to low occupancy.
+  warn(NumbaPerformanceWarning(msg))
+/home/womackow/CODE_SPACE/agh/sem2/UMISI-sem2-ParallelProg/lab06/python/.venv/lib/python3.13/site-packages/numba/cuda/dispatcher.py:540: NumbaPerformanceWarning: Grid size 1 will likely result in GPU under-utilization due to low occupancy.
+  warn(NumbaPerformanceWarning(msg))
+/home/womackow/CODE_SPACE/agh/sem2/UMISI-sem2-ParallelProg/lab06/python/.venv/lib/python3.13/site-packages/numba/cuda/dispatcher.py:540: NumbaPerformanceWarning: Grid size 4 will likely result in GPU under-utilization due to low occupancy.
+  warn(NumbaPerformanceWarning(msg))
+/home/womackow/CODE_SPACE/agh/sem2/UMISI-sem2-ParallelProg/lab06/python/.venv/lib/python3.13/site-packages/numba/cuda/dispatcher.py:540: NumbaPerformanceWarning: Grid size 4 will likely result in GPU under-utilization due to low occupancy.
+  warn(NumbaPerformanceWarning(msg))
+/home/womackow/CODE_SPACE/agh/sem2/UMISI-sem2-ParallelProg/lab06/python/.venv/lib/python3.13/site-packages/numba/cuda/dispatcher.py:540: NumbaPerformanceWarning: Grid size 1 will likely result in GPU under-utilization due to low occupancy.
+  warn(NumbaPerformanceWarning(msg))
+/home/womackow/CODE_SPACE/agh/sem2/UMISI-sem2-ParallelProg/lab06/python/.venv/lib/python3.13/site-packages/numba/cuda/dispatcher.py:540: NumbaPerformanceWarning: Grid size 4 will likely result in GPU under-utilization due to low occupancy.
+  warn(NumbaPerformanceWarning(msg))
+/home/womackow/CODE_SPACE/agh/sem2/UMISI-sem2-ParallelProg/lab06/python/.venv/lib/python3.13/site-packages/numba/cuda/dispatcher.py:540: NumbaPerformanceWarning: Grid size 1 will likely result in GPU under-utilization due to low occupancy.
+  warn(NumbaPerformanceWarning(msg))
+n=1000 rep=1 wall=0.0616s sim=0.0215s mean=1.0318
+/home/womackow/CODE_SPACE/agh/sem2/UMISI-sem2-ParallelProg/lab06/python/.venv/lib/python3.13/site-packages/numba/cuda/dispatcher.py:540: NumbaPerformanceWarning: Grid size 40 will likely result in GPU under-utilization due to low occupancy.
+  warn(NumbaPerformanceWarning(msg))
+n=10000 rep=1 wall=0.0422s sim=0.0410s mean=1.0407
+n=100000 rep=1 wall=0.2676s sim=0.2650s mean=1.0337
+n=300000 rep=1 wall=0.7425s sim=0.7386s mean=1.0359
+n=1000000 rep=1 wall=2.4379s sim=2.4270s mean=1.0377
+n=3000000 rep=1 wall=7.2564s sim=7.2353s mean=1.0376
+n=10000000 rep=1 wall=24.1573s sim=24.0985s mean=1.0375

@@ -31,7 +31,7 @@ if [[ -d /usr/lib/cuda ]]; then
     export CUDA_PATH="${CUDA_PATH:-/usr/lib/cuda}"
 fi
 
-uv run python _src/langevin.py \
+uv run python _src/main.py \
     --problem "$PROBLEM" \
     --backend "$BACKEND" \
     --dt "$DT" \

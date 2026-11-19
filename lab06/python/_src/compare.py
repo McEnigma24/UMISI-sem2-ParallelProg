@@ -15,7 +15,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 
-RUN_RE = re.compile(r"_(density|mfpt)_(cupy|pycuda|cpu)_")
+RUN_RE = re.compile(r"_(density|mfpt)_(cupy_native|cupy|pycuda|numba|cpu)_")
 
 
 def find_project_root() -> Path:
@@ -110,7 +110,13 @@ def aggregate_mean(rows: list[dict], key: str) -> dict[tuple, dict]:
 
 def plot_time_vs_n(rows: list[dict], problem: str, out_path: Path) -> None:
     fig, ax = plt.subplots(figsize=(8, 5))
-    for backend, color in [("cupy", "#1f77b4"), ("pycuda", "#ff7f0e"), ("cpu", "#2ca02c")]:
+    for backend, color in [
+        ("cupy", "#1f77b4"),
+        ("cupy_native", "#d62728"),
+        ("pycuda", "#ff7f0e"),
+        ("numba", "#9467bd"),
+        ("cpu", "#2ca02c"),
+    ]:
         sub = [r for r in rows if r["problem"] == problem and r["backend"] == backend]
         if not sub:
             continue
@@ -141,7 +147,13 @@ def plot_sim_vs_post_kernel_vs_n(
 ) -> None:
     """Czas kernela symulacji vs post (histogram / sum_reduce)."""
     fig, ax = plt.subplots(figsize=(8, 5))
-    for backend, color in [("cupy", "#1f77b4"), ("pycuda", "#ff7f0e"), ("cpu", "#2ca02c")]:
+    for backend, color in [
+        ("cupy", "#1f77b4"),
+        ("cupy_native", "#d62728"),
+        ("pycuda", "#ff7f0e"),
+        ("numba", "#9467bd"),
+        ("cpu", "#2ca02c"),
+    ]:
         sub = [r for r in rows if r["problem"] == problem and r["backend"] == backend]
         if not sub:
             continue
@@ -175,7 +187,13 @@ def plot_sim_vs_post_kernel_vs_n(
 
 def plot_throughput_vs_n(rows: list[dict], problem: str, out_path: Path) -> None:
     fig, ax = plt.subplots(figsize=(8, 5))
-    for backend, color in [("cupy", "#1f77b4"), ("pycuda", "#ff7f0e"), ("cpu", "#2ca02c")]:
+    for backend, color in [
+        ("cupy", "#1f77b4"),
+        ("cupy_native", "#d62728"),
+        ("pycuda", "#ff7f0e"),
+        ("numba", "#9467bd"),
+        ("cpu", "#2ca02c"),
+    ]:
         sub = [r for r in rows if r["problem"] == problem and r["backend"] == backend]
         sub = [r for r in sub if r.get("throughput")]
         if not sub:
@@ -199,7 +217,13 @@ def plot_density_error_vs_n(rows: list[dict], out_path: Path) -> None:
     fig, ax = plt.subplots(figsize=(8, 5))
     first_ns: list[int] = []
     first_scale = 1.0
-    for backend, color in [("cupy", "#1f77b4"), ("pycuda", "#ff7f0e"), ("cpu", "#2ca02c")]:
+    for backend, color in [
+        ("cupy", "#1f77b4"),
+        ("cupy_native", "#d62728"),
+        ("pycuda", "#ff7f0e"),
+        ("numba", "#9467bd"),
+        ("cpu", "#2ca02c"),
+    ]:
         sub = [r for r in rows if r["problem"] == "density" and r["backend"] == backend]
         sub = [r for r in sub if r.get("error") is not None]
         if not sub:
@@ -300,6 +324,7 @@ def plot_mfpt_mean_vs_n(rows: list[dict], out_path: Path) -> None:
             series_plan.append(("cupy", "#1f77b4", "o", "cupy"))
         if pycuda:
             series_plan.append(("pycuda", "#ff7f0e", "s", "pycuda"))
+    series_plan.append(("numba", "#9467bd", "d", "numba"))
     series_plan.append(("cpu", "#2ca02c", "^", "cpu"))
 
     for label, color, marker, key in series_plan:

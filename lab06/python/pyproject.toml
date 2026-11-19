@@ -1,7 +1,7 @@
 [project]
 name = "langevin-gpu"
 version = "0.1.0"
-description = "Langevin SDE on GPU (CuPy + PyCUDA)"
+description = "Langevin SDE on GPU (CuPy + PyCUDA + Numba)"
 readme = "README.md"
 authors = [
     { name = "McEnigma24", email = "wojciech.mackowiak24@gmail.com" }
@@ -12,6 +12,7 @@ dependencies = [
     "matplotlib>=3.11.2",
     "numpy>=2.5.4",
     "pycuda>=2025.1",
+    "numba>=0.60.0",
 ]
 
 [tool.uv]

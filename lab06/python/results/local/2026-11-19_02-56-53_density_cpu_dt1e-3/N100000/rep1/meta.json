@@ -1,0 +1,20 @@
+{
+  "problem": "density",
+  "backend": "cpu",
+  "n": 100000,
+  "rep": 1,
+  "seed": 100059,
+  "t_alloc": 0.0,
+  "t_kernel_sim": 0.7938658890052466,
+  "t_kernel_post": 0.0013409270031843334,
+  "t_histogram": 0.0013409270031843334,
+  "t_sum_reduce": 0.0,
+  "t_d2h": 0.0,
+  "t_total": 0.7955287060030969,
+  "n_trajectories": 100000,
+  "n_steps_total": 100000000,
+  "mean": 0.002167097773487115,
+  "variance": 0.991190398877578,
+  "l1_error": 0.023133906274499856,
+  "var_error": 0.008809601122422017
+}

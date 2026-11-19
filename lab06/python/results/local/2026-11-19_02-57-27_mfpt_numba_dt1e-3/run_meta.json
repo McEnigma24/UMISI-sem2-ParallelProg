@@ -1,0 +1,26 @@
+{
+  "problem": "mfpt",
+  "backend": "numba",
+  "device": "NVIDIA GeForce RTX 3060",
+  "t_compile": 0.5386571069975616,
+  "dt": 0.001,
+  "tau": 1.0,
+  "bins": 200,
+  "max_time": 20.0,
+  "n_list": [
+    1000,
+    10000,
+    100000,
+    300000,
+    1000000,
+    3000000,
+    10000000,
+    30000000,
+    100000000
+  ],
+  "repeats": 1,
+  "seed": 42,
+  "timestamp_utc": "2026-11-19T01:57:28.514192+00:00",
+  "hostname": "Stacjonarny",
+  "platform": "local"
+}

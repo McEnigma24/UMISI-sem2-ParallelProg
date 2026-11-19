@@ -1,4 +1,4 @@
-"""GPU backends (CuPy, PyCUDA) and optional NumPy CPU reference."""
+"""GPU backends (CuPy, PyCUDA, Numba CUDA) and optional NumPy CPU reference."""
 
 from __future__ import annotations
 
@@ -478,6 +478,172 @@ class PycudaBackend(LangevinBackend):
         return results, times
 
 
+class NumbaBackend(LangevinBackend):
+    name = "numba"
+
+    def __init__(self) -> None:
+        from numba import cuda
+
+        if not cuda.is_available():
+            raise RuntimeError("Numba CUDA niedostępna")
+        self.cuda = cuda
+        self._compiled = False
+
+    def compile(self) -> None:
+        if self._compiled:
+            return
+        from numba_kernels import warmup_compile
+
+        t0 = time.perf_counter()
+        warmup_compile()
+        self.t_compile = time.perf_counter() - t0
+        self._compiled = True
+
+    def device_name(self) -> str:
+        dev = self.cuda.get_current_device()
+        raw = getattr(dev, "name", dev)
+        if isinstance(raw, bytes):
+            return raw.decode()
+        return str(raw)
+
+    def _event_s(self, start, end) -> float:
+        end.synchronize()
+        return float(self.cuda.event_elapsed_time(start, end)) / 1000.0
+
+    def run_density(
+        self, n: int, dt: float, tau: float, bins: int, seed: int
+    ) -> tuple[dict, dict]:
+        from numba_kernels import HIST_SHARED_MAX, density_kernel, histogram_kernel
+
+        if bins > HIST_SHARED_MAX:
+            raise ValueError(f"numba histogram: bins<={HIST_SHARED_MAX}, dostałem {bins}")
+
+        cuda = self.cuda
+        self.compile()
+        n_steps = max(1, int(round(tau / dt)))
+        sqrt_dt = np.float32(np.sqrt(dt))
+        grid, block = launch_grid(n)
+        wall0 = time.perf_counter()
+        times: dict[str, float] = {}
+
+        t_alloc0 = time.perf_counter()
+        x_out = cuda.device_array(n, dtype=np.float32)
+        hist = cuda.device_array(bins, dtype=np.uint32)
+        times["t_alloc"] = time.perf_counter() - t_alloc0
+
+        ev0, ev1 = cuda.event(), cuda.event()
+        ev0.record()
+        density_kernel[grid, block](
+            x_out, np.int32(n), np.int32(n_steps), sqrt_dt, np.uint64(seed)
+        )
+        ev1.record()
+        times["t_kernel_sim"] = self._event_s(ev0, ev1)
+
+        xmin, xmax = np.float32(-5.0 * np.sqrt(tau)), np.float32(5.0 * np.sqrt(tau))
+        hist[:] = 0
+
+        ev2, ev3 = cuda.event(), cuda.event()
+        ev2.record()
+        histogram_kernel[grid, block](
+            x_out, hist, np.int32(n), np.int32(bins), xmin, xmax
+        )
+        ev3.record()
+        times["t_kernel_post"] = self._event_s(ev2, ev3)
+        times["t_histogram"] = times["t_kernel_post"]
+        times["t_sum_reduce"] = 0.0
+
+        ev4, ev5 = cuda.event(), cuda.event()
+        ev4.record()
+        hist_h = hist.copy_to_host()
+        sample = x_out.copy_to_host()[:: max(1, n // 100_000)]
+        ev5.record()
+        times["t_d2h"] = self._event_s(ev4, ev5)
+
+        edges = np.linspace(float(xmin), float(xmax), bins + 1)
+        results = {
+            "hist_counts": hist_h.astype(np.int64),
+            "hist_edges": edges,
+            "mean": float(sample.mean()),
+            "variance": float(sample.var(ddof=0)),
+            "n_steps": n_steps,
+            "tau": tau,
+            "analytic_var": tau,
+        }
+        times["t_total"] = time.perf_counter() - wall0
+        times["n_trajectories"] = n
+        times["n_steps_total"] = n * n_steps
+        return results, times
+
+    def run_mfpt(
+        self, n: int, dt: float, max_time: float, seed: int
+    ) -> tuple[dict, dict]:
+        from numba_kernels import mfpt_kernel, sum_reduce_kernel
+
+        cuda = self.cuda
+        self.compile()
+        max_steps = max(1, int(round(max_time / dt)))
+        sqrt_dt = np.float32(np.sqrt(dt))
+        grid, block = launch_grid(n)
+        wall0 = time.perf_counter()
+        times: dict[str, float] = {}
+
+        t_alloc0 = time.perf_counter()
+        exit_t = cuda.device_array(n, dtype=np.float32)
+        sum_out = cuda.device_array(1, dtype=np.float64)
+        cnt_out = cuda.device_array(1, dtype=np.uint32)
+        times["t_alloc"] = time.perf_counter() - t_alloc0
+
+        ev0, ev1 = cuda.event(), cuda.event()
+        ev0.record()
+        mfpt_kernel[grid, block](
+            exit_t,
+            np.int32(n),
+            np.float32(dt),
+            sqrt_dt,
+            np.int32(max_steps),
+            np.uint64(seed),
+        )
+        ev1.record()
+        times["t_kernel_sim"] = self._event_s(ev0, ev1)
+
+        sum_out[:] = 0
+        cnt_out[:] = 0
+        ev2, ev3 = cuda.event(), cuda.event()
+        ev2.record()
+        sum_reduce_kernel[grid, block](exit_t, np.int32(n), sum_out, cnt_out)
+        ev3.record()
+        times["t_kernel_post"] = self._event_s(ev2, ev3)
+        times["t_histogram"] = 0.0
+        times["t_sum_reduce"] = times["t_kernel_post"]
+
+        ev4, ev5 = cuda.event(), cuda.event()
+        ev4.record()
+        total_sum = float(sum_out.copy_to_host()[0])
+        n_exited = int(cnt_out.copy_to_host()[0])
+        exit_h = exit_t.copy_to_host()
+        ev5.record()
+        times["t_d2h"] = self._event_s(ev4, ev5)
+
+        exited = exit_h[exit_h > 0]
+        n_censored = int((exit_h <= 0).sum())
+        mean_exit = total_sum / max(n_exited, 1)
+        std_exit = float(exited.std(ddof=1)) if len(exited) > 1 else 0.0
+
+        results = {
+            "mean_exit_time": mean_exit,
+            "std_exit_time": std_exit,
+            "n_exited": n_exited,
+            "n_censored": n_censored,
+            "max_steps": max_steps,
+            "analytic_mean": 1.0,
+            "exit_times_sample": exited[:: max(1, len(exited) // 50_000)],
+        }
+        times["t_total"] = time.perf_counter() - wall0
+        times["n_trajectories"] = n
+        times["n_steps_total"] = int(total_sum / dt)
+        return results, times
+
+
 class NumpyBackend(LangevinBackend):
     name = "cpu"
 
@@ -586,8 +752,14 @@ def make_backend(name: str) -> LangevinBackend:
     name = name.lower()
     if name == "cupy":
         return CupyBackend()
+    if name == "cupy_native":
+        from cupy_native import CupyNativeBackend
+
+        return CupyNativeBackend()
     if name == "pycuda":
         return PycudaBackend()
+    if name == "numba":
+        return NumbaBackend()
     if name == "cpu":
         return NumpyBackend()
     raise ValueError(f"Unknown backend: {name}")

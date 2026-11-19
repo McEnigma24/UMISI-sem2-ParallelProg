@@ -6,7 +6,7 @@ Symulacja wielu trajektorii równania Langevina (schemat Euler–Maruyama) na GP
 2. **mfpt** — średni pierwszy czas wyjścia z przedziału \([-1,1]\).
 
 Wspólne kernele CUDA C: [`_src/kernels/langevin.cu`](_src/kernels/langevin.cu).  
-Backendy: [`_src/backends.py`](_src/backends.py) (`cupy`, `pycuda`, opcjonalnie `cpu`).
+Backendy: [`_src/backends.py`](_src/backends.py) — `cupy` / `pycuda` (wspólny [`langevin.cu`](_src/kernels/langevin.cu)), **`cupy_native`** ([`cupy_native.py`](_src/cupy_native.py): `cp.random` + `cp.histogram`, bez `.cu`), `numba`, `cpu`.
 
 ### Wymagania (WSL2 + NVIDIA)
 
@@ -38,5 +38,5 @@ export PYTHONPATH=_src
 bash scripts/pipeline.sh density cupy 1e-3 "1e3 1e4 1e5" 1 42
 ```
 
-Kod: `_src/langevin.py`, `_src/analyze.py`, `_src/compare.py`.  
+Kod: `_src/main.py` (punkt wejścia), `_src/analyze.py`, `_src/compare.py`.  
 Raport: [REPORT.md](REPORT.md).

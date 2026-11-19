@@ -1,0 +1,21 @@
+{
+  "problem": "mfpt",
+  "backend": "numba",
+  "n": 1000000,
+  "rep": 1,
+  "seed": 1000059,
+  "t_alloc": 0.0009805159934330732,
+  "t_kernel_sim": 2.427007568359375,
+  "t_kernel_post": 0.00022937600314617158,
+  "t_histogram": 0.0,
+  "t_sum_reduce": 0.00022937600314617158,
+  "t_d2h": 0.0029321920871734617,
+  "t_total": 2.4378991889971076,
+  "n_trajectories": 1000000,
+  "n_steps_total": 1037651718,
+  "mean_exit_time": 1.0376517183874883,
+  "std_exit_time": 0.8466440439224243,
+  "n_exited": 1000000,
+  "n_censored": 0,
+  "mean_error": 0.037651718387488264
+}
