@@ -54,7 +54,7 @@ class LangevinBackend(ABC):
 
 
 class CupyBackend(LangevinBackend):
-    name = "cupy"
+    name = "cupy_kernel"
 
     def __init__(self) -> None:
         import cupy as cp
@@ -750,12 +750,16 @@ class NumpyBackend(LangevinBackend):
 
 def make_backend(name: str) -> LangevinBackend:
     name = name.lower()
-    if name == "cupy":
+    name = {
+        "cupy": "cupy_kernel",
+        "cupy_native": "cupy_naive",
+    }.get(name, name)
+    if name == "cupy_kernel":
         return CupyBackend()
-    if name == "cupy_native":
-        from cupy_native import CupyNativeBackend
+    if name == "cupy_naive":
+        from cupy_naive import CupyNaiveBackend
 
-        return CupyNativeBackend()
+        return CupyNaiveBackend()
     if name == "pycuda":
         return PycudaBackend()
     if name == "numba":

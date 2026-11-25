@@ -40,10 +40,10 @@ Pełny sweep: `bash local/sweep.sh` → 6 przebiegów, `results/compare/summary.
 
 | Problem | Backend | \(N=10^8\) | \(t_\text{total}\) | Jakość |
 |---------|---------|-----------|-------------------|--------|
-| density | cupy | tak | 0.96 s | L1 = 0.0008 |
+| density | cupy_kernel | tak | 0.96 s | L1 = 0.0008 |
 | density | pycuda | tak | 1.13 s | L1 = 0.0008 |
 | density | cpu | nie (do \(10^6\)) | 8.17 s @ \(10^6\) | L1 = 0.0075 |
-| mfpt | cupy | tak | 4.91 s | \(\langle\tau\rangle = 1.0374\) |
+| mfpt | cupy_kernel | tak | 4.91 s | \(\langle\tau\rangle = 1.0374\) |
 | mfpt | pycuda | tak | 4.95 s | \(\langle\tau\rangle = 1.0374\) |
 | mfpt | cpu | nie (do \(10^6\)) | 311 s @ \(10^6\) | \(\langle\tau\rangle = 1.0367\) |
 
@@ -60,6 +60,6 @@ Wykresy: `results/compare/density_time_vs_n.png`, `mfpt_time_vs_n.png`, `*_error
 ## Uruchomienie
 
 ```bash
-bash local/run.sh density cupy "1e3 1e4 1e5 1e6 1e7"
+bash local/run.sh density cupy_kernel "1e3 1e4 1e5 1e6 1e7"
 uv run python _src/compare.py
 ```

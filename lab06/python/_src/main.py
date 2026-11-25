@@ -46,8 +46,8 @@ def parse_args():
     p.add_argument("--problem", choices=("density", "mfpt"), required=True)
     p.add_argument(
         "--backend",
-        choices=("cupy", "cupy_native", "pycuda", "numba", "cpu"),
-        default="cupy",
+        choices=("cupy_kernel", "cupy_naive", "pycuda", "numba", "cpu"),
+        default="cupy_kernel",
     )
     p.add_argument("--n-list", type=str, default="1e5")
     p.add_argument("--dt", type=float, default=1e-3)

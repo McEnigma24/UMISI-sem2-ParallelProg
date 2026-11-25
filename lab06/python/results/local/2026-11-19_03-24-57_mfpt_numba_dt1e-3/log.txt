@@ -1,0 +1,40 @@
+=== Pipeline Langevin GPU ===
+problem=mfpt backend=numba dt=1e-3 n_list=1e3 1e4 1e5 3e5 1e6 3e6 1e7 3e7 1e8 repeats=1 seed=42
+RUN_DIR=results/local/2026-11-19_03-24-57_mfpt_numba_dt1e-3
+/home/womackow/CODE_SPACE/agh/sem2/UMISI-sem2-ParallelProg/lab06/python/.venv/lib/python3.13/site-packages/numba/cuda/dispatcher.py:540: NumbaPerformanceWarning: Grid size 1 will likely result in GPU under-utilization due to low occupancy.
+  warn(NumbaPerformanceWarning(msg))
+/home/womackow/CODE_SPACE/agh/sem2/UMISI-sem2-ParallelProg/lab06/python/.venv/lib/python3.13/site-packages/numba/cuda/dispatcher.py:540: NumbaPerformanceWarning: Grid size 1 will likely result in GPU under-utilization due to low occupancy.
+  warn(NumbaPerformanceWarning(msg))
+/home/womackow/CODE_SPACE/agh/sem2/UMISI-sem2-ParallelProg/lab06/python/.venv/lib/python3.13/site-packages/numba/cuda/dispatcher.py:540: NumbaPerformanceWarning: Grid size 1 will likely result in GPU under-utilization due to low occupancy.
+  warn(NumbaPerformanceWarning(msg))
+/home/womackow/CODE_SPACE/agh/sem2/UMISI-sem2-ParallelProg/lab06/python/.venv/lib/python3.13/site-packages/numba/cuda/dispatcher.py:540: NumbaPerformanceWarning: Grid size 1 will likely result in GPU under-utilization due to low occupancy.
+  warn(NumbaPerformanceWarning(msg))
+/home/womackow/CODE_SPACE/agh/sem2/UMISI-sem2-ParallelProg/lab06/python/.venv/lib/python3.13/site-packages/numba/cuda/dispatcher.py:540: NumbaPerformanceWarning: Grid size 4 will likely result in GPU under-utilization due to low occupancy.
+  warn(NumbaPerformanceWarning(msg))
+/home/womackow/CODE_SPACE/agh/sem2/UMISI-sem2-ParallelProg/lab06/python/.venv/lib/python3.13/site-packages/numba/cuda/dispatcher.py:540: NumbaPerformanceWarning: Grid size 1 will likely result in GPU under-utilization due to low occupancy.
+  warn(NumbaPerformanceWarning(msg))
+/home/womackow/CODE_SPACE/agh/sem2/UMISI-sem2-ParallelProg/lab06/python/.venv/lib/python3.13/site-packages/numba/cuda/dispatcher.py:540: NumbaPerformanceWarning: Grid size 4 will likely result in GPU under-utilization due to low occupancy.
+  warn(NumbaPerformanceWarning(msg))
+/home/womackow/CODE_SPACE/agh/sem2/UMISI-sem2-ParallelProg/lab06/python/.venv/lib/python3.13/site-packages/numba/cuda/dispatcher.py:540: NumbaPerformanceWarning: Grid size 4 will likely result in GPU under-utilization due to low occupancy.
+  warn(NumbaPerformanceWarning(msg))
+/home/womackow/CODE_SPACE/agh/sem2/UMISI-sem2-ParallelProg/lab06/python/.venv/lib/python3.13/site-packages/numba/cuda/dispatcher.py:540: NumbaPerformanceWarning: Grid size 1 will likely result in GPU under-utilization due to low occupancy.
+  warn(NumbaPerformanceWarning(msg))
+/home/womackow/CODE_SPACE/agh/sem2/UMISI-sem2-ParallelProg/lab06/python/.venv/lib/python3.13/site-packages/numba/cuda/dispatcher.py:540: NumbaPerformanceWarning: Grid size 4 will likely result in GPU under-utilization due to low occupancy.
+  warn(NumbaPerformanceWarning(msg))
+/home/womackow/CODE_SPACE/agh/sem2/UMISI-sem2-ParallelProg/lab06/python/.venv/lib/python3.13/site-packages/numba/cuda/dispatcher.py:540: NumbaPerformanceWarning: Grid size 1 will likely result in GPU under-utilization due to low occupancy.
+  warn(NumbaPerformanceWarning(msg))
+n=1000 rep=1 wall=0.0557s sim=0.0215s mean=1.0318
+/home/womackow/CODE_SPACE/agh/sem2/UMISI-sem2-ParallelProg/lab06/python/.venv/lib/python3.13/site-packages/numba/cuda/dispatcher.py:540: NumbaPerformanceWarning: Grid size 40 will likely result in GPU under-utilization due to low occupancy.
+  warn(NumbaPerformanceWarning(msg))
+n=10000 rep=1 wall=0.0424s sim=0.0410s mean=1.0407
+n=100000 rep=1 wall=0.2721s sim=0.2702s mean=1.0337
+n=300000 rep=1 wall=0.7417s sim=0.7371s mean=1.0359
+n=1000000 rep=1 wall=2.4416s sim=2.4316s mean=1.0377
+n=3000000 rep=1 wall=7.2587s sim=7.2379s mean=1.0376
+n=10000000 rep=1 wall=24.1598s sim=24.0993s mean=1.0375
+n=30000000 rep=1 wall=72.4526s sim=72.2668s mean=1.0374
+n=100000000 rep=1 wall=241.4191s sim=240.8541s mean=1.0374
+Zapisano przebieg: results/local/2026-11-19_03-24-57_mfpt_numba_dt1e-3
+Wykresy w results/local/2026-11-19_03-24-57_mfpt_numba_dt1e-3
+RUN_DIR=results/local/2026-11-19_03-24-57_mfpt_numba_dt1e-3
+=== Done ===

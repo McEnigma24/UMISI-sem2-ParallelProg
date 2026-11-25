@@ -7,7 +7,7 @@ if [[ "$(basename "$PWD")" == "scripts" ]]; then
 fi
 
 PROBLEM="${1:-density}"
-BACKEND="${2:-cupy}"
+BACKEND="${2:-cupy_kernel}"
 DT="${3:-1e-3}"
 N_LIST="${4:-1e5}"
 REPEATS="${5:-1}"

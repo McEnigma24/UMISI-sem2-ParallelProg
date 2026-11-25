@@ -1,0 +1,16 @@
+=== Pipeline Langevin GPU ===
+problem=mfpt backend=pycuda dt=1e-3 n_list=1e3 1e4 1e5 3e5 1e6 3e6 1e7 3e7 1e8 repeats=1 seed=42
+RUN_DIR=results/local/2026-11-19_03-24-47_mfpt_pycuda_dt1e-3
+n=1000 rep=1 wall=0.0024s sim=0.0013s mean=1.0333
+n=10000 rep=1 wall=0.0022s sim=0.0014s mean=1.0364
+n=100000 rep=1 wall=0.0076s sim=0.0059s mean=1.0386
+n=300000 rep=1 wall=0.0184s sim=0.0149s mean=1.0390
+n=1000000 rep=1 wall=0.0571s sim=0.0476s mean=1.0372
+n=3000000 rep=1 wall=0.1516s sim=0.1370s mean=1.0371
+n=10000000 rep=1 wall=0.4803s sim=0.4221s mean=1.0371
+n=30000000 rep=1 wall=1.4318s sim=1.2623s mean=1.0373
+n=100000000 rep=1 wall=4.7441s sim=4.1727s mean=1.0374
+Zapisano przebieg: results/local/2026-11-19_03-24-47_mfpt_pycuda_dt1e-3
+Wykresy w results/local/2026-11-19_03-24-47_mfpt_pycuda_dt1e-3
+RUN_DIR=results/local/2026-11-19_03-24-47_mfpt_pycuda_dt1e-3
+=== Done ===

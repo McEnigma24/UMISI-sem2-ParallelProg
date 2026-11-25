@@ -1,0 +1,21 @@
+{
+  "problem": "mfpt",
+  "backend": "cpu",
+  "n": 300000,
+  "rep": 1,
+  "seed": 300059,
+  "t_alloc": 0.0,
+  "t_kernel_sim": 13.169221978008864,
+  "t_kernel_post": 0.0,
+  "t_histogram": 0.0,
+  "t_sum_reduce": 0.0,
+  "t_d2h": 0.0,
+  "t_total": 13.169998333993135,
+  "n_trajectories": 300000,
+  "n_steps_total": 310066798,
+  "mean_exit_time": 1.0335559966666357,
+  "std_exit_time": 0.8441300757996815,
+  "n_exited": 300000,
+  "n_censored": 0,
+  "mean_error": 0.03355599666663567
+}

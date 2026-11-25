@@ -15,7 +15,26 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 
-RUN_RE = re.compile(r"_(density|mfpt)_(cupy_native|cupy|pycuda|numba|cpu)_")
+RUN_RE = re.compile(
+    r"_(density|mfpt)_(cupy_naive|cupy_kernel|cupy_native|cupy|pycuda|numba|cpu)_"
+)
+
+BACKEND_ALIASES = {
+    "cupy": "cupy_kernel",
+    "cupy_native": "cupy_naive",
+}
+
+BACKEND_COLORS: list[tuple[str, str]] = [
+    ("cupy_kernel", "#1f77b4"),
+    ("cupy_naive", "#d62728"),
+    ("pycuda", "#ff7f0e"),
+    ("numba", "#9467bd"),
+    ("cpu", "#2ca02c"),
+]
+
+
+def normalize_backend(name: str) -> str:
+    return BACKEND_ALIASES.get(name, name)
 
 
 def find_project_root() -> Path:
@@ -45,6 +64,7 @@ def load_records(results_root: Path) -> list[dict]:
         if not parsed:
             continue
         problem, backend = parsed
+        backend = normalize_backend(backend)
         meta = json.loads(meta_path.read_text(encoding="utf-8"))
         run_meta_path = meta_path.parent.parent.parent / "run_meta.json"
         dt = None
@@ -110,13 +130,7 @@ def aggregate_mean(rows: list[dict], key: str) -> dict[tuple, dict]:
 
 def plot_time_vs_n(rows: list[dict], problem: str, out_path: Path) -> None:
     fig, ax = plt.subplots(figsize=(8, 5))
-    for backend, color in [
-        ("cupy", "#1f77b4"),
-        ("cupy_native", "#d62728"),
-        ("pycuda", "#ff7f0e"),
-        ("numba", "#9467bd"),
-        ("cpu", "#2ca02c"),
-    ]:
+    for backend, color in BACKEND_COLORS:
         sub = [r for r in rows if r["problem"] == problem and r["backend"] == backend]
         if not sub:
             continue
@@ -147,13 +161,7 @@ def plot_sim_vs_post_kernel_vs_n(
 ) -> None:
     """Czas kernela symulacji vs post (histogram / sum_reduce)."""
     fig, ax = plt.subplots(figsize=(8, 5))
-    for backend, color in [
-        ("cupy", "#1f77b4"),
-        ("cupy_native", "#d62728"),
-        ("pycuda", "#ff7f0e"),
-        ("numba", "#9467bd"),
-        ("cpu", "#2ca02c"),
-    ]:
+    for backend, color in BACKEND_COLORS:
         sub = [r for r in rows if r["problem"] == problem and r["backend"] == backend]
         if not sub:
             continue
@@ -187,13 +195,7 @@ def plot_sim_vs_post_kernel_vs_n(
 
 def plot_throughput_vs_n(rows: list[dict], problem: str, out_path: Path) -> None:
     fig, ax = plt.subplots(figsize=(8, 5))
-    for backend, color in [
-        ("cupy", "#1f77b4"),
-        ("cupy_native", "#d62728"),
-        ("pycuda", "#ff7f0e"),
-        ("numba", "#9467bd"),
-        ("cpu", "#2ca02c"),
-    ]:
+    for backend, color in BACKEND_COLORS:
         sub = [r for r in rows if r["problem"] == problem and r["backend"] == backend]
         sub = [r for r in sub if r.get("throughput")]
         if not sub:
@@ -217,13 +219,7 @@ def plot_density_error_vs_n(rows: list[dict], out_path: Path) -> None:
     fig, ax = plt.subplots(figsize=(8, 5))
     first_ns: list[int] = []
     first_scale = 1.0
-    for backend, color in [
-        ("cupy", "#1f77b4"),
-        ("cupy_native", "#d62728"),
-        ("pycuda", "#ff7f0e"),
-        ("numba", "#9467bd"),
-        ("cpu", "#2ca02c"),
-    ]:
+    for backend, color in BACKEND_COLORS:
         sub = [r for r in rows if r["problem"] == "density" and r["backend"] == backend]
         sub = [r for r in sub if r.get("error") is not None]
         if not sub:
@@ -277,7 +273,9 @@ def plot_mfpt_mean_vs_n(rows: list[dict], out_path: Path) -> None:
     ax.set_ylim(0.99, ymax_data + 0.012)
     ax.grid(True, which="both", alpha=0.3)
 
-    large = [r for r in ref_rows if r["n"] >= 1_000_000 and r["backend"] in ("cupy", "pycuda")]
+    large = [
+        r for r in ref_rows if r["n"] >= 1_000_000 and r["backend"] in ("cupy_kernel", "pycuda")
+    ]
     limit = float(np.mean([r["mean_exit"] for r in large])) if large else None
 
     ax.axhline(
@@ -308,22 +306,25 @@ def plot_mfpt_mean_vs_n(rows: list[dict], out_path: Path) -> None:
         yerr = [sem_map.get(("mfpt", backend, n), 0.0) for n in ns]
         return ns, ys, yerr
 
-    cupy = series_for("cupy")
+    ck = series_for("cupy_kernel")
     pycuda = series_for("pycuda")
     gpu_same = False
-    if cupy and pycuda:
-        ns1, ys1, _ = cupy
+    if ck and pycuda:
+        ns1, ys1, _ = ck
         ns2, ys2, _ = pycuda
         gpu_same = ns1 == ns2 and all(abs(a - b) < 1e-12 for a, b in zip(ys1, ys2, strict=True))
 
     series_plan: list[tuple[str, str, str, str]] = []
-    if gpu_same and cupy:
-        series_plan.append(("cupy / pycuda", "#1f77b4", "o", "cupy"))
+    if gpu_same and ck:
+        series_plan.append(("cupy_kernel / pycuda", "#1f77b4", "o", "cupy_kernel"))
     else:
-        if cupy:
-            series_plan.append(("cupy", "#1f77b4", "o", "cupy"))
+        if ck:
+            series_plan.append(("cupy_kernel", "#1f77b4", "o", "cupy_kernel"))
         if pycuda:
             series_plan.append(("pycuda", "#ff7f0e", "s", "pycuda"))
+    naive = series_for("cupy_naive")
+    if naive:
+        series_plan.append(("cupy_naive", "#d62728", "x", "cupy_naive"))
     series_plan.append(("numba", "#9467bd", "d", "numba"))
     series_plan.append(("cpu", "#2ca02c", "^", "cpu"))
 

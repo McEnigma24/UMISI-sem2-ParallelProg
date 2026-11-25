@@ -1,0 +1,12 @@
+=== Pipeline Langevin GPU ===
+problem=mfpt backend=cupy_naive dt=1e-3 n_list=1e3 1e4 1e5 3e5 1e6 repeats=1 seed=42
+RUN_DIR=results/local/2026-11-19_03-30-50_mfpt_cupy_naive_dt1e-3
+n=1000 rep=1 wall=2.8013s sim=2.7996s mean=1.0347
+n=10000 rep=1 wall=3.0843s sim=3.0353s mean=1.0369
+n=100000 rep=1 wall=7.0059s sim=7.0037s mean=1.0328
+n=300000 rep=1 wall=5.3530s sim=5.3467s mean=1.0366
+n=1000000 rep=1 wall=8.5337s sim=8.5243s mean=1.0385
+Zapisano przebieg: results/local/2026-11-19_03-30-50_mfpt_cupy_naive_dt1e-3
+Wykresy w results/local/2026-11-19_03-30-50_mfpt_cupy_naive_dt1e-3
+RUN_DIR=results/local/2026-11-19_03-30-50_mfpt_cupy_naive_dt1e-3
+=== Done ===

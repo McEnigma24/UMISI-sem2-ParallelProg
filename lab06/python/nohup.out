@@ -1,0 +1,207 @@
+######## sweep problem=density backend=cupy_kernel ########
+=== Pipeline Langevin GPU ===
+problem=density backend=cupy_kernel dt=1e-3 n_list=1e3 1e4 1e5 3e5 1e6 3e6 1e7 3e7 1e8 repeats=1 seed=42
+RUN_DIR=results/local/2026-11-19_03-22-20_density_cupy_kernel_dt1e-3
+n=1000 rep=1 wall=0.0008s sim=0.0002s L1=0.2462
+n=10000 rep=1 wall=0.0008s sim=0.0002s L1=0.0896
+n=100000 rep=1 wall=0.0019s sim=0.0011s L1=0.0249
+n=300000 rep=1 wall=0.0121s sim=0.0032s L1=0.0154
+n=1000000 rep=1 wall=0.0116s sim=0.0104s L1=0.0091
+n=3000000 rep=1 wall=0.0323s sim=0.0309s L1=0.0045
+n=10000000 rep=1 wall=0.1056s sim=0.1028s L1=0.0027
+n=30000000 rep=1 wall=0.2901s sim=0.2848s L1=0.0014
+n=100000000 rep=1 wall=0.9592s sim=0.9457s L1=0.0008
+Zapisano przebieg: results/local/2026-11-19_03-22-20_density_cupy_kernel_dt1e-3
+Wykresy w results/local/2026-11-19_03-22-20_density_cupy_kernel_dt1e-3
+RUN_DIR=results/local/2026-11-19_03-22-20_density_cupy_kernel_dt1e-3
+=== Done ===
+######## sweep problem=density backend=pycuda ########
+=== Pipeline Langevin GPU ===
+problem=density backend=pycuda dt=1e-3 n_list=1e3 1e4 1e5 3e5 1e6 3e6 1e7 3e7 1e8 repeats=1 seed=42
+RUN_DIR=results/local/2026-11-19_03-22-25_density_pycuda_dt1e-3
+n=1000 rep=1 wall=0.0010s sim=0.0002s L1=0.2462
+n=10000 rep=1 wall=0.0010s sim=0.0002s L1=0.0896
+n=100000 rep=1 wall=0.0024s sim=0.0011s L1=0.0249
+n=300000 rep=1 wall=0.0047s sim=0.0032s L1=0.0154
+n=1000000 rep=1 wall=0.0145s sim=0.0104s L1=0.0091
+n=3000000 rep=1 wall=0.0383s sim=0.0310s L1=0.0045
+n=10000000 rep=1 wall=0.1159s sim=0.0985s L1=0.0027
+n=30000000 rep=1 wall=0.3273s sim=0.2842s L1=0.0014
+n=100000000 rep=1 wall=1.1105s sim=0.9501s L1=0.0008
+Zapisano przebieg: results/local/2026-11-19_03-22-25_density_pycuda_dt1e-3
+Wykresy w results/local/2026-11-19_03-22-25_density_pycuda_dt1e-3
+RUN_DIR=results/local/2026-11-19_03-22-25_density_pycuda_dt1e-3
+=== Done ===
+######## sweep problem=density backend=numba ########
+=== Pipeline Langevin GPU ===
+problem=density backend=numba dt=1e-3 n_list=1e3 1e4 1e5 3e5 1e6 3e6 1e7 3e7 1e8 repeats=1 seed=42
+RUN_DIR=results/local/2026-11-19_03-22-30_density_numba_dt1e-3
+/home/womackow/CODE_SPACE/agh/sem2/UMISI-sem2-ParallelProg/lab06/python/.venv/lib/python3.13/site-packages/numba/cuda/dispatcher.py:540: NumbaPerformanceWarning: Grid size 1 will likely result in GPU under-utilization due to low occupancy.
+  warn(NumbaPerformanceWarning(msg))
+/home/womackow/CODE_SPACE/agh/sem2/UMISI-sem2-ParallelProg/lab06/python/.venv/lib/python3.13/site-packages/numba/cuda/dispatcher.py:540: NumbaPerformanceWarning: Grid size 1 will likely result in GPU under-utilization due to low occupancy.
+  warn(NumbaPerformanceWarning(msg))
+/home/womackow/CODE_SPACE/agh/sem2/UMISI-sem2-ParallelProg/lab06/python/.venv/lib/python3.13/site-packages/numba/cuda/dispatcher.py:540: NumbaPerformanceWarning: Grid size 1 will likely result in GPU under-utilization due to low occupancy.
+  warn(NumbaPerformanceWarning(msg))
+/home/womackow/CODE_SPACE/agh/sem2/UMISI-sem2-ParallelProg/lab06/python/.venv/lib/python3.13/site-packages/numba/cuda/dispatcher.py:540: NumbaPerformanceWarning: Grid size 1 will likely result in GPU under-utilization due to low occupancy.
+  warn(NumbaPerformanceWarning(msg))
+/home/womackow/CODE_SPACE/agh/sem2/UMISI-sem2-ParallelProg/lab06/python/.venv/lib/python3.13/site-packages/numba/cuda/dispatcher.py:540: NumbaPerformanceWarning: Grid size 4 will likely result in GPU under-utilization due to low occupancy.
+  warn(NumbaPerformanceWarning(msg))
+/home/womackow/CODE_SPACE/agh/sem2/UMISI-sem2-ParallelProg/lab06/python/.venv/lib/python3.13/site-packages/numba/cuda/dispatcher.py:540: NumbaPerformanceWarning: Grid size 1 will likely result in GPU under-utilization due to low occupancy.
+  warn(NumbaPerformanceWarning(msg))
+/home/womackow/CODE_SPACE/agh/sem2/UMISI-sem2-ParallelProg/lab06/python/.venv/lib/python3.13/site-packages/numba/cuda/dispatcher.py:540: NumbaPerformanceWarning: Grid size 4 will likely result in GPU under-utilization due to low occupancy.
+  warn(NumbaPerformanceWarning(msg))
+/home/womackow/CODE_SPACE/agh/sem2/UMISI-sem2-ParallelProg/lab06/python/.venv/lib/python3.13/site-packages/numba/cuda/dispatcher.py:540: NumbaPerformanceWarning: Grid size 4 will likely result in GPU under-utilization due to low occupancy.
+  warn(NumbaPerformanceWarning(msg))
+/home/womackow/CODE_SPACE/agh/sem2/UMISI-sem2-ParallelProg/lab06/python/.venv/lib/python3.13/site-packages/numba/cuda/dispatcher.py:540: NumbaPerformanceWarning: Grid size 1 will likely result in GPU under-utilization due to low occupancy.
+  warn(NumbaPerformanceWarning(msg))
+/home/womackow/CODE_SPACE/agh/sem2/UMISI-sem2-ParallelProg/lab06/python/.venv/lib/python3.13/site-packages/numba/cuda/dispatcher.py:540: NumbaPerformanceWarning: Grid size 4 will likely result in GPU under-utilization due to low occupancy.
+  warn(NumbaPerformanceWarning(msg))
+/home/womackow/CODE_SPACE/agh/sem2/UMISI-sem2-ParallelProg/lab06/python/.venv/lib/python3.13/site-packages/numba/cuda/dispatcher.py:540: NumbaPerformanceWarning: Grid size 1 will likely result in GPU under-utilization due to low occupancy.
+  warn(NumbaPerformanceWarning(msg))
+n=1000 rep=1 wall=0.0378s sim=0.0051s L1=0.2495
+/home/womackow/CODE_SPACE/agh/sem2/UMISI-sem2-ParallelProg/lab06/python/.venv/lib/python3.13/site-packages/numba/cuda/dispatcher.py:540: NumbaPerformanceWarning: Grid size 40 will likely result in GPU under-utilization due to low occupancy.
+  warn(NumbaPerformanceWarning(msg))
+n=10000 rep=1 wall=0.0114s sim=0.0104s L1=0.0872
+n=100000 rep=1 wall=0.0734s sim=0.0723s L1=0.0247
+n=300000 rep=1 wall=0.2029s sim=0.2001s L1=0.0150
+n=1000000 rep=1 wall=0.6717s sim=0.6648s L1=0.0086
+n=3000000 rep=1 wall=1.9963s sim=1.9895s L1=0.0051
+n=10000000 rep=1 wall=6.6496s sim=6.6277s L1=0.0024
+n=30000000 rep=1 wall=20.0398s sim=19.9390s L1=0.0014
+n=100000000 rep=1 wall=66.7555s sim=66.6062s L1=0.0007
+Zapisano przebieg: results/local/2026-11-19_03-22-30_density_numba_dt1e-3
+Wykresy w results/local/2026-11-19_03-22-30_density_numba_dt1e-3
+RUN_DIR=results/local/2026-11-19_03-22-30_density_numba_dt1e-3
+=== Done ===
+######## sweep problem=density backend=cupy_naive ########
+=== Pipeline Langevin GPU ===
+problem=density backend=cupy_naive dt=1e-3 n_list=1e3 1e4 1e5 3e5 1e6 3e6 1e7 3e7 1e8 repeats=1 seed=42
+RUN_DIR=results/local/2026-11-19_03-24-12_density_cupy_naive_dt1e-3
+n=1000 rep=1 wall=0.0018s sim=0.0001s L1=0.2567
+n=10000 rep=1 wall=0.0039s sim=0.0021s L1=0.0698
+n=100000 rep=1 wall=0.0269s sim=0.0245s L1=0.0221
+n=300000 rep=1 wall=0.0726s sim=0.0682s L1=0.0138
+n=1000000 rep=1 wall=0.0529s sim=0.0494s L1=0.0080
+n=3000000 rep=1 wall=0.1511s sim=0.1479s L1=0.0041
+n=10000000 rep=1 wall=0.4956s sim=0.4926s L1=0.0026
+n=30000000 rep=1 wall=1.4812s sim=1.4778s L1=0.0014
+n=100000000 rep=1 wall=4.9332s sim=4.9265s L1=0.0008
+Zapisano przebieg: results/local/2026-11-19_03-24-12_density_cupy_naive_dt1e-3
+Wykresy w results/local/2026-11-19_03-24-12_density_cupy_naive_dt1e-3
+RUN_DIR=results/local/2026-11-19_03-24-12_density_cupy_naive_dt1e-3
+=== Done ===
+######## sweep problem=density backend=cpu ########
+=== Pipeline Langevin GPU ===
+problem=density backend=cpu dt=1e-3 n_list=1e3 1e4 1e5 3e5 1e6 repeats=1 seed=42
+RUN_DIR=results/local/2026-11-19_03-24-23_density_cpu_dt1e-3
+n=1000 rep=1 wall=0.0148s sim=0.0095s L1=0.2484
+n=10000 rep=1 wall=0.0796s sim=0.0793s L1=0.0804
+n=100000 rep=1 wall=0.8057s sim=0.8041s L1=0.0231
+n=300000 rep=1 wall=2.3505s sim=2.3485s L1=0.0149
+n=1000000 rep=1 wall=7.9611s sim=7.9553s L1=0.0075
+Zapisano przebieg: results/local/2026-11-19_03-24-23_density_cpu_dt1e-3
+Wykresy w results/local/2026-11-19_03-24-23_density_cpu_dt1e-3
+RUN_DIR=results/local/2026-11-19_03-24-23_density_cpu_dt1e-3
+=== Done ===
+######## sweep problem=mfpt backend=cupy_kernel ########
+=== Pipeline Langevin GPU ===
+problem=mfpt backend=cupy_kernel dt=1e-3 n_list=1e3 1e4 1e5 3e5 1e6 3e6 1e7 3e7 1e8 repeats=1 seed=42
+RUN_DIR=results/local/2026-11-19_03-24-37_mfpt_cupy_kernel_dt1e-3
+n=1000 rep=1 wall=0.0019s sim=0.0012s mean=1.0333
+n=10000 rep=1 wall=0.0021s sim=0.0015s mean=1.0364
+n=100000 rep=1 wall=0.0067s sim=0.0058s mean=1.0386
+n=300000 rep=1 wall=0.0166s sim=0.0147s mean=1.0390
+n=1000000 rep=1 wall=0.0564s sim=0.0468s mean=1.0372
+n=3000000 rep=1 wall=0.1538s sim=0.1372s mean=1.0371
+n=10000000 rep=1 wall=0.4723s sim=0.4190s mean=1.0371
+n=30000000 rep=1 wall=1.4115s sim=1.2498s mean=1.0373
+n=100000000 rep=1 wall=4.7374s sim=4.1403s mean=1.0374
+Zapisano przebieg: results/local/2026-11-19_03-24-37_mfpt_cupy_kernel_dt1e-3
+Wykresy w results/local/2026-11-19_03-24-37_mfpt_cupy_kernel_dt1e-3
+RUN_DIR=results/local/2026-11-19_03-24-37_mfpt_cupy_kernel_dt1e-3
+=== Done ===
+######## sweep problem=mfpt backend=pycuda ########
+=== Pipeline Langevin GPU ===
+problem=mfpt backend=pycuda dt=1e-3 n_list=1e3 1e4 1e5 3e5 1e6 3e6 1e7 3e7 1e8 repeats=1 seed=42
+RUN_DIR=results/local/2026-11-19_03-24-47_mfpt_pycuda_dt1e-3
+n=1000 rep=1 wall=0.0024s sim=0.0013s mean=1.0333
+n=10000 rep=1 wall=0.0022s sim=0.0014s mean=1.0364
+n=100000 rep=1 wall=0.0076s sim=0.0059s mean=1.0386
+n=300000 rep=1 wall=0.0184s sim=0.0149s mean=1.0390
+n=1000000 rep=1 wall=0.0571s sim=0.0476s mean=1.0372
+n=3000000 rep=1 wall=0.1516s sim=0.1370s mean=1.0371
+n=10000000 rep=1 wall=0.4803s sim=0.4221s mean=1.0371
+n=30000000 rep=1 wall=1.4318s sim=1.2623s mean=1.0373
+n=100000000 rep=1 wall=4.7441s sim=4.1727s mean=1.0374
+Zapisano przebieg: results/local/2026-11-19_03-24-47_mfpt_pycuda_dt1e-3
+Wykresy w results/local/2026-11-19_03-24-47_mfpt_pycuda_dt1e-3
+RUN_DIR=results/local/2026-11-19_03-24-47_mfpt_pycuda_dt1e-3
+=== Done ===
+######## sweep problem=mfpt backend=numba ########
+=== Pipeline Langevin GPU ===
+problem=mfpt backend=numba dt=1e-3 n_list=1e3 1e4 1e5 3e5 1e6 3e6 1e7 3e7 1e8 repeats=1 seed=42
+RUN_DIR=results/local/2026-11-19_03-24-57_mfpt_numba_dt1e-3
+/home/womackow/CODE_SPACE/agh/sem2/UMISI-sem2-ParallelProg/lab06/python/.venv/lib/python3.13/site-packages/numba/cuda/dispatcher.py:540: NumbaPerformanceWarning: Grid size 1 will likely result in GPU under-utilization due to low occupancy.
+  warn(NumbaPerformanceWarning(msg))
+/home/womackow/CODE_SPACE/agh/sem2/UMISI-sem2-ParallelProg/lab06/python/.venv/lib/python3.13/site-packages/numba/cuda/dispatcher.py:540: NumbaPerformanceWarning: Grid size 1 will likely result in GPU under-utilization due to low occupancy.
+  warn(NumbaPerformanceWarning(msg))
+/home/womackow/CODE_SPACE/agh/sem2/UMISI-sem2-ParallelProg/lab06/python/.venv/lib/python3.13/site-packages/numba/cuda/dispatcher.py:540: NumbaPerformanceWarning: Grid size 1 will likely result in GPU under-utilization due to low occupancy.
+  warn(NumbaPerformanceWarning(msg))
+/home/womackow/CODE_SPACE/agh/sem2/UMISI-sem2-ParallelProg/lab06/python/.venv/lib/python3.13/site-packages/numba/cuda/dispatcher.py:540: NumbaPerformanceWarning: Grid size 1 will likely result in GPU under-utilization due to low occupancy.
+  warn(NumbaPerformanceWarning(msg))
+/home/womackow/CODE_SPACE/agh/sem2/UMISI-sem2-ParallelProg/lab06/python/.venv/lib/python3.13/site-packages/numba/cuda/dispatcher.py:540: NumbaPerformanceWarning: Grid size 4 will likely result in GPU under-utilization due to low occupancy.
+  warn(NumbaPerformanceWarning(msg))
+/home/womackow/CODE_SPACE/agh/sem2/UMISI-sem2-ParallelProg/lab06/python/.venv/lib/python3.13/site-packages/numba/cuda/dispatcher.py:540: NumbaPerformanceWarning: Grid size 1 will likely result in GPU under-utilization due to low occupancy.
+  warn(NumbaPerformanceWarning(msg))
+/home/womackow/CODE_SPACE/agh/sem2/UMISI-sem2-ParallelProg/lab06/python/.venv/lib/python3.13/site-packages/numba/cuda/dispatcher.py:540: NumbaPerformanceWarning: Grid size 4 will likely result in GPU under-utilization due to low occupancy.
+  warn(NumbaPerformanceWarning(msg))
+/home/womackow/CODE_SPACE/agh/sem2/UMISI-sem2-ParallelProg/lab06/python/.venv/lib/python3.13/site-packages/numba/cuda/dispatcher.py:540: NumbaPerformanceWarning: Grid size 4 will likely result in GPU under-utilization due to low occupancy.
+  warn(NumbaPerformanceWarning(msg))
+/home/womackow/CODE_SPACE/agh/sem2/UMISI-sem2-ParallelProg/lab06/python/.venv/lib/python3.13/site-packages/numba/cuda/dispatcher.py:540: NumbaPerformanceWarning: Grid size 1 will likely result in GPU under-utilization due to low occupancy.
+  warn(NumbaPerformanceWarning(msg))
+/home/womackow/CODE_SPACE/agh/sem2/UMISI-sem2-ParallelProg/lab06/python/.venv/lib/python3.13/site-packages/numba/cuda/dispatcher.py:540: NumbaPerformanceWarning: Grid size 4 will likely result in GPU under-utilization due to low occupancy.
+  warn(NumbaPerformanceWarning(msg))
+/home/womackow/CODE_SPACE/agh/sem2/UMISI-sem2-ParallelProg/lab06/python/.venv/lib/python3.13/site-packages/numba/cuda/dispatcher.py:540: NumbaPerformanceWarning: Grid size 1 will likely result in GPU under-utilization due to low occupancy.
+  warn(NumbaPerformanceWarning(msg))
+n=1000 rep=1 wall=0.0557s sim=0.0215s mean=1.0318
+/home/womackow/CODE_SPACE/agh/sem2/UMISI-sem2-ParallelProg/lab06/python/.venv/lib/python3.13/site-packages/numba/cuda/dispatcher.py:540: NumbaPerformanceWarning: Grid size 40 will likely result in GPU under-utilization due to low occupancy.
+  warn(NumbaPerformanceWarning(msg))
+n=10000 rep=1 wall=0.0424s sim=0.0410s mean=1.0407
+n=100000 rep=1 wall=0.2721s sim=0.2702s mean=1.0337
+n=300000 rep=1 wall=0.7417s sim=0.7371s mean=1.0359
+n=1000000 rep=1 wall=2.4416s sim=2.4316s mean=1.0377
+n=3000000 rep=1 wall=7.2587s sim=7.2379s mean=1.0376
+n=10000000 rep=1 wall=24.1598s sim=24.0993s mean=1.0375
+n=30000000 rep=1 wall=72.4526s sim=72.2668s mean=1.0374
+n=100000000 rep=1 wall=241.4191s sim=240.8541s mean=1.0374
+Zapisano przebieg: results/local/2026-11-19_03-24-57_mfpt_numba_dt1e-3
+Wykresy w results/local/2026-11-19_03-24-57_mfpt_numba_dt1e-3
+RUN_DIR=results/local/2026-11-19_03-24-57_mfpt_numba_dt1e-3
+=== Done ===
+######## sweep problem=mfpt backend=cupy_naive ########
+=== Pipeline Langevin GPU ===
+problem=mfpt backend=cupy_naive dt=1e-3 n_list=1e3 1e4 1e5 3e5 1e6 repeats=1 seed=42
+RUN_DIR=results/local/2026-11-19_03-30-50_mfpt_cupy_naive_dt1e-3
+n=1000 rep=1 wall=2.8013s sim=2.7996s mean=1.0347
+n=10000 rep=1 wall=3.0843s sim=3.0353s mean=1.0369
+n=100000 rep=1 wall=7.0059s sim=7.0037s mean=1.0328
+n=300000 rep=1 wall=5.3530s sim=5.3467s mean=1.0366
+n=1000000 rep=1 wall=8.5337s sim=8.5243s mean=1.0385
+Zapisano przebieg: results/local/2026-11-19_03-30-50_mfpt_cupy_naive_dt1e-3
+Wykresy w results/local/2026-11-19_03-30-50_mfpt_cupy_naive_dt1e-3
+RUN_DIR=results/local/2026-11-19_03-30-50_mfpt_cupy_naive_dt1e-3
+=== Done ===
+######## sweep problem=mfpt backend=cpu ########
+=== Pipeline Langevin GPU ===
+problem=mfpt backend=cpu dt=1e-3 n_list=1e3 1e4 1e5 3e5 1e6 repeats=1 seed=42
+RUN_DIR=results/local/2026-11-19_03-31-19_mfpt_cpu_dt1e-3
+n=1000 rep=1 wall=0.0824s sim=0.0773s mean=1.0232
+n=10000 rep=1 wall=0.4107s sim=0.4106s mean=1.0454
+n=100000 rep=1 wall=4.6814s sim=4.6810s mean=1.0404
+n=300000 rep=1 wall=13.1700s sim=13.1692s mean=1.0336
+n=1000000 rep=1 wall=46.7519s sim=46.7496s mean=1.0358
+Zapisano przebieg: results/local/2026-11-19_03-31-19_mfpt_cpu_dt1e-3
+Wykresy w results/local/2026-11-19_03-31-19_mfpt_cpu_dt1e-3
+RUN_DIR=results/local/2026-11-19_03-31-19_mfpt_cpu_dt1e-3
+=== Done ===
+Porównanie w /home/womackow/CODE_SPACE/agh/sem2/UMISI-sem2-ParallelProg/lab06/python/results/compare (78 punktów)

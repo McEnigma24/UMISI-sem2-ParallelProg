@@ -1,0 +1,20 @@
+{
+  "problem": "density",
+  "backend": "cupy_naive",
+  "n": 1000,
+  "rep": 1,
+  "seed": 1059,
+  "t_alloc": 0.0,
+  "t_kernel_sim": 9.830400347709655e-05,
+  "t_kernel_post": 0.0003717119991779327,
+  "t_histogram": 0.0003717119991779327,
+  "t_sum_reduce": 0.0,
+  "t_d2h": 0.0002091200053691864,
+  "t_total": 0.001807754990295507,
+  "n_trajectories": 1000,
+  "n_steps_total": 1000000,
+  "mean": -0.01806214079260826,
+  "variance": 0.9858320355415344,
+  "l1_error": 0.25670097406800574,
+  "var_error": 0.014167964458465576
+}

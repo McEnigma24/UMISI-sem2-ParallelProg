@@ -1,0 +1,16 @@
+=== Pipeline Langevin GPU ===
+problem=density backend=cupy_naive dt=1e-3 n_list=1e3 1e4 1e5 3e5 1e6 3e6 1e7 3e7 1e8 repeats=1 seed=42
+RUN_DIR=results/local/2026-11-19_03-24-12_density_cupy_naive_dt1e-3
+n=1000 rep=1 wall=0.0018s sim=0.0001s L1=0.2567
+n=10000 rep=1 wall=0.0039s sim=0.0021s L1=0.0698
+n=100000 rep=1 wall=0.0269s sim=0.0245s L1=0.0221
+n=300000 rep=1 wall=0.0726s sim=0.0682s L1=0.0138
+n=1000000 rep=1 wall=0.0529s sim=0.0494s L1=0.0080
+n=3000000 rep=1 wall=0.1511s sim=0.1479s L1=0.0041
+n=10000000 rep=1 wall=0.4956s sim=0.4926s L1=0.0026
+n=30000000 rep=1 wall=1.4812s sim=1.4778s L1=0.0014
+n=100000000 rep=1 wall=4.9332s sim=4.9265s L1=0.0008
+Zapisano przebieg: results/local/2026-11-19_03-24-12_density_cupy_naive_dt1e-3
+Wykresy w results/local/2026-11-19_03-24-12_density_cupy_naive_dt1e-3
+RUN_DIR=results/local/2026-11-19_03-24-12_density_cupy_naive_dt1e-3
+=== Done ===
