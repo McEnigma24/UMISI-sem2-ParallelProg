@@ -1,0 +1,4 @@
+=== Pipeline Ising Metropolis ===
+mode=local L=256 steps=10000 beta=4 P=4 sync=border repeats=1 seed=42
+RUN_DIR=results/local/2026-11-25_23-11-30_L256_border_4p
+--- rep 1/1 ---

@@ -1,0 +1,10 @@
+=== Pipeline Ising Metropolis ===
+mode=local L=960 steps=120 beta=1 P=1 sync=smart repeats=1 seed=42
+RUN_DIR=results/local/2026-11-25_23-36-58_L960_smart_1p
+--- rep 1/1 ---
+L=960 P=1 sync=smart wall=3.2181s E=-1735826.00 M=28088 sync/MCS=7.8
+Zapisano: results/local/2026-11-25_23-36-58_L960_smart_1p/rep1
+--- analyze rep 1 ---
+Wykresy w results/local/2026-11-25_23-36-58_L960_smart_1p/rep1
+RUN_DIR=results/local/2026-11-25_23-36-58_L960_smart_1p
+=== Done ===

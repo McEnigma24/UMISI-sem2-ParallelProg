@@ -1,0 +1,35 @@
+=== Pipeline Ising Metropolis ===
+mode=local L=256 steps=10000 beta=1 P=4 sync=border repeats=1 seed=42
+RUN_DIR=results/local/2026-11-25_22-56-56_L256_border_4p
+--- rep 1/1 ---
+L=256 P=4 sync=border wall=871.3993s E=-130880.00 M=65488 sync/MCS=2047.6
+Zapisano: results/local/2026-11-25_22-56-56_L256_border_4p/rep1
+--- analyze rep 1 ---
+Traceback (most recent call last):
+  File "/home/womackow/CODE_SPACE/agh/sem2/UMISI-sem2-ParallelProg/lab07/_src/analyze.py", line 123, in <module>
+    main()
+    ~~~~^^
+  File "/home/womackow/CODE_SPACE/agh/sem2/UMISI-sem2-ParallelProg/lab07/_src/analyze.py", line 118, in main
+    analyze(args.run_dir)
+    ~~~~~~~^^^^^^^^^^^^^^
+  File "/home/womackow/CODE_SPACE/agh/sem2/UMISI-sem2-ParallelProg/lab07/_src/analyze.py", line 104, in analyze
+    plot_snapshots(run_dir, data)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "/home/womackow/CODE_SPACE/agh/sem2/UMISI-sem2-ParallelProg/lab07/_src/analyze.py", line 51, in plot_snapshots
+    ax.imshow(snap, cmap="coolwarm", vmin=-1, vmax=1, interpolation="nearest")
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/womackow/CODE_SPACE/agh/sem2/UMISI-sem2-ParallelProg/lab07/.venv/lib/python3.13/site-packages/matplotlib/__init__.py", line 1531, in inner
+    return func(
+        ax,
+        *map(cbook.sanitize_sequence, args),
+        **{k: cbook.sanitize_sequence(v) for k, v in kwargs.items()})
+  File "/home/womackow/CODE_SPACE/agh/sem2/UMISI-sem2-ParallelProg/lab07/.venv/lib/python3.13/site-packages/matplotlib/axes/_axes.py", line 6377, in imshow
+    im.set_data(X)
+    ~~~~~~~~~~~^^^
+  File "/home/womackow/CODE_SPACE/agh/sem2/UMISI-sem2-ParallelProg/lab07/.venv/lib/python3.13/site-packages/matplotlib/image.py", line 716, in set_data
+    self._A = self._normalize_image_array(A)
+              ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^
+  File "/home/womackow/CODE_SPACE/agh/sem2/UMISI-sem2-ParallelProg/lab07/.venv/lib/python3.13/site-packages/matplotlib/image.py", line 679, in _normalize_image_array
+    raise TypeError(f"Image data of dtype {A.dtype} cannot be "
+                    f"converted to float")
+TypeError: Image data of dtype object cannot be converted to float

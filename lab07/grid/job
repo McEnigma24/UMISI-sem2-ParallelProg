@@ -1,0 +1,35 @@
+#!/bin/bash
+#SBATCH --job-name=ISING_MC
+#SBATCH --account=plgar2026-cpu
+#SBATCH --partition=plgrid
+#SBATCH --time=04:00:00
+#SBATCH --ntasks=17
+#SBATCH --cpus-per-task=1
+#SBATCH --mem=32G
+#SBATCH --output=output/out_%j.txt
+#SBATCH --error=output/err_%j.txt
+
+source "_common_" 2>/dev/null
+
+cd "$SLURM_SUBMIT_DIR"
+
+module load openmpi/4.1.6-gcc-13.2.0
+
+export ISING_L="${ISING_L:-3840}"
+export ISING_STEPS="${ISING_STEPS:-100}"
+export ISING_BETA="${ISING_BETA:-1}"
+export ISING_SYNC_LIST="${ISING_SYNC_LIST:-border smart}"
+export ISING_SEED="${ISING_SEED:-42}"
+export ISING_REPEATS="${ISING_REPEATS:-1}"
+
+P=$SLURM_NTASKS
+
+echo "GRID_JOB -> STARTED P=$P L=$ISING_L steps=$ISING_STEPS"
+
+for sync in $ISING_SYNC_LIST; do
+    echo "GRID_JOB -> sync=$sync"
+    bash scripts/pipeline.sh grid "$ISING_L" "$ISING_STEPS" "$ISING_BETA" "$P" "$sync" "$ISING_REPEATS" "$ISING_SEED"
+done
+
+echo "GRID_JOB -> wyniki w results/grid/"
+echo "GRID_JOB -> ENDED"

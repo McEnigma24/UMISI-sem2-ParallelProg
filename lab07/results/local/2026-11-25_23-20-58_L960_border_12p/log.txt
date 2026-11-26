@@ -1,0 +1,10 @@
+=== Pipeline Ising Metropolis ===
+mode=local L=960 steps=120 beta=1 P=12 sync=border repeats=1 seed=42
+RUN_DIR=results/local/2026-11-25_23-20-58_L960_border_12p
+--- rep 1/1 ---
+L=960 P=12 sync=border wall=931.2153s E=-1734196.00 M=69242 sync/MCS=23043.7
+Zapisano: results/local/2026-11-25_23-20-58_L960_border_12p/rep1
+--- analyze rep 1 ---
+Wykresy w results/local/2026-11-25_23-20-58_L960_border_12p/rep1
+RUN_DIR=results/local/2026-11-25_23-20-58_L960_border_12p
+=== Done ===
